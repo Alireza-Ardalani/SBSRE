@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="BadSmells"
+            visible="true"
+            id="gr.uom.java.jdeodorant.BadSmells">
+         <menu
+               label="Bad Smells"
+               id="BadSmellsMenu">
+            <separator
+                  name="sampleGroup">
+            </separator>
+         </menu>
+         <action
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               icon="icons/repair.png"
+               id="gr.uom.java.jdeodorant.actions.FeatureEnvy"
+               label="Feature Envy"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               tooltip="Feature Envy">
+         </action>
+         <action
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               icon="icons/repair.png"
+               id="gr.uom.java.jdeodorant.actions.TypeChecking"
+               label="Type Checking"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               tooltip="Type Checking">
+         </action>
+         <action
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               icon="icons/repair.png"
+               id="gr.uom.java.jdeodorant.actions.LongMethod"
+               label="Long Method"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               tooltip="Long Method">
+         </action>
+         <action
+               label="God Class"
+               icon="icons/repair.png"
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               tooltip="God Class"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               id="gr.uom.java.jdeodorant.actions.GodClass">
+         </action>
+         <action
+               label="Duplicated Code"
+               icon="icons/repair.png"
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               tooltip="Duplicated Code"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               id="gr.uom.java.jdeodorant.actions.DuplicatedCode">
+         </action>
+         <action
+               label="SRP-Violation"
+               icon="icons/repair.png"
+               class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
+               tooltip="SRP-Violation"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               id="gr.uom.java.jdeodorant.actions.SingleResponsibilityViolation">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Bad Smells"
+            id="gr.uom.java.jdeodorant">
+      </category>
+      <view
+            name="SRP-Violation"
+            icon="icons/repair.png"
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.SingleResponsibilityViolation"
+            id="gr.uom.java.jdeodorant.views.SingleResponsibilityViolation">
+      </view>
+      <view
+            name="Feature Envy"
+            icon="icons/repair.png"
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.FeatureEnvy"
+            id="gr.uom.java.jdeodorant.views.FeatureEnvy">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.TypeChecking"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.TypeChecking"
+            name="Type Checking">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.LongMethod"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.LongMethod"
+            name="Long Method">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.GodClass"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.GodClass"
+            name="God Class">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.DuplicatedCode"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.DuplicatedCode"
+            name="Duplicated Code">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.CodeSmellVisualization"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.CodeSmellVisualization"
+            name="Code Smell Visualization">
+      </view>
+      <view
+            category="gr.uom.java.jdeodorant"
+            class="gr.uom.java.jdeodorant.refactoring.views.CodeSmellPackageExplorer"
+            icon="icons/repair.png"
+            id="gr.uom.java.jdeodorant.views.CodeSmellPackageExplorer"
+            name="Code Smell Package Explorer">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="gr.uom.java.jdeodorant.views.FeatureEnvy">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="gr.uom.java.jdeodorant.views.TypeChecking"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="gr.uom.java.jdeodorant.views.LongMethod"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="gr.uom.java.jdeodorant.views.SingleResponsibilityViolation"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="gr.uom.java.jdeodorant.views.GodClass"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="gr.uom.java.jdeodorant.views.DuplicatedCode"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="gr.uom.java.jdeodorant.preferences.PropertyManagerPreferencePage"
+            id="gr.uom.java.jdeodorant.preferences.PropertyManagerPreferencePage"
+            name="JDeodorant">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="gr.uom.java.jdeodorant.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="gr.uom.java.jdeodorant.extractionAnnotation"
+            colorPreferenceKey="extractionAnnotation_color"
+            colorPreferenceValue="192,255,192"
+            contributesToHeader="false"
+            highlightPreferenceKey="extractionAnnotation_highlight"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="true"
+            isGoToNextNavigationTargetKey="extractionAnnotation_nextNavigationTarget"
+            isGoToPreviousNavigationTarget="true"
+            isGoToPreviousNavigationTargetKey="extractionAnnotation_previousNavigationTarget"
+            label="Extracted Code"
+            overviewRulerPreferenceKey="extractionAnnotation_overviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="0"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="extractionAnnotation_nextPrevDropdownToolbar"
+            textPreferenceKey="extractionAnnotation_text"
+            textPreferenceValue="true"
+            textStylePreferenceKey="extractionAnnotation_stylePreferences"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="extractionAnnotation_verticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+      <specification
+            annotationType="gr.uom.java.jdeodorant.duplicationAnnotation"
+            colorPreferenceKey="duplicationAnnotation_color"
+            colorPreferenceValue="255,160,160"
+            contributesToHeader="false"
+            highlightPreferenceKey="duplicationAnnotation_highlight"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="true"
+            isGoToNextNavigationTargetKey="duplicationAnnotation_nextNavigationTarget"
+            isGoToPreviousNavigationTarget="true"
+            isGoToPreviousNavigationTargetKey="duplicationAnnotation_previousNavigationTarget"
+            label="Duplicated Code"
+            overviewRulerPreferenceKey="duplicationAnnotation_overviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="0"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="duplicationAnnotation_nextPrevDropdownToolbar"
+            textPreferenceKey="duplicationAnnotation_text"
+            textPreferenceValue="true"
+            textStylePreferenceKey="duplicationAnnotation_stylePreferences"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="duplicationAnnotation_verticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="gr.uom.java.jdeodorant.sliceProfile"
+            objectClass="org.eclipse.jdt.core.IMethod">
+         <action
+               class="gr.uom.java.jdeodorant.refactoring.views.SliceProfileAction"
+               id="gr.uom.java.jdeodorant.sliceProfileAction"
+               label="Slice-based Cohesion Metrics...">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="gr.uom.java.jdeodorant.cloneRefactoring"
+            objectClass="org.eclipse.jdt.core.IMethod">
+         <action
+               class="gr.uom.java.jdeodorant.refactoring.views.CloneRefactoringAction"
+               id="gr.uom.java.jdeodorant.cloneRefactoringAction"
+               label="Refactor Duplicated Code...">
+         </action>
+      </objectContribution>
+   </extension>
+</plugin>
