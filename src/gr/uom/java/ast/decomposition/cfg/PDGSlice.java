@@ -35,11 +35,7 @@ public class PDGSlice extends Graph {
 		this.returnedVariablesInOriginalMethod = pdg.getReturnedVariables();
 		this.boundaryBlock = boundaryBlock;
 		Set<PDGNode> regionNodes = pdg.blockBasedRegion(boundaryBlock);
-		
-		//CommentAlireza: use this method in pdgsliceUnion and pdgObjectSliceUnion
-		System.out.println("case-2: PDGSlice-method");
-		
-		
+			
 		//CommentAlireza: for loop add all or some code of variable&if&for&.....
 		for(PDGNode node : regionNodes) {
 			nodes.add(node);		

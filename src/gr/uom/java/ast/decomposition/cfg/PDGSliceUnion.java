@@ -40,7 +40,6 @@ public class PDGSliceUnion {
 		this.sliceNodes = new TreeSet<PDGNode>();
 		
 		//comment-alireza : localVariableCriterion this is the variable in code and all of them analys
-		System.out.println("case-4: PDGSliceUnion");
 		//System.out.println(localVariableCriterion.toString()+"=>localVariableCriterion");
 		
 		for(PDGNode nodeCriterion : nodeCriteria) {
@@ -490,8 +489,8 @@ public class PDGSliceUnion {
 
 	private boolean complyWithUserThresholds() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		//int minimumSliceSize = store.getInt(PreferenceConstants.P_MINIMUM_SLICE_SIZE);
-		int minimumSliceSize = 4;
+		int minimumSliceSize = store.getInt(PreferenceConstants.P_MINIMUM_SLICE_SIZE);
+		//int minimumSliceSize = 3;
 		int maximumSliceSize = store.getInt(PreferenceConstants.P_MAXIMUM_SLICE_SIZE);
 		int maximumDuplication = store.getInt(PreferenceConstants.P_MAXIMUM_DUPLICATION);
 		double maximumRatioOfDuplicatedToExtracted = store.getDouble(

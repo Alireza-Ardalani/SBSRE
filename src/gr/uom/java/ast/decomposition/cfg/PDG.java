@@ -40,9 +40,6 @@ public class PDG extends Graph {
 	private IProgressMonitor monitor;
 	
 	public PDG(CFG cfg, IFile iFile, Set<FieldObject> accessedFields, IProgressMonitor monitor) {
-		
-		System.out.println("case1:-PDG-Main-Method");
-		
 		this.cfg = cfg;
 		this.iFile = iFile;
 		this.monitor = monitor;
@@ -360,7 +357,15 @@ public class PDG extends Graph {
 				 if(pdgNode.definesLocalVariable(localVariableCriterion) &&!pdgNode.declaresLocalVariable(localVariableCriterion) 
 						 && pdgNode.getId() > First && pdgNode.getId() <Last ){
 						nodeCriteria.add(pdgNode);
-				}	
+				}
+				 if(pdgNode.usesLocalVariable(localVariableCriterion)
+						 && pdgNode.getId() > First && pdgNode.getId() <= Last ){
+						if(pdgNode.toString().contains("System.out")||pdgNode.toString().contains("System.err") ||
+								pdgNode.toString().contains("write") || pdgNode.toString().contains("show") 
+								|| pdgNode.toString().contains("executeUpdate") ){
+							nodeCriteria.add(pdgNode);
+						}	
+					}
 			}
 		return nodeCriteria;
 }
@@ -369,8 +374,10 @@ public class PDG extends Graph {
 			for(GraphNode node : nodes) {
 				PDGNode pdgNode = (PDGNode)node;
 				if(pdgNode.definesLocalVariable(localVariableCriterion) &&
-						!pdgNode.declaresLocalVariable(localVariableCriterion))
+						!pdgNode.declaresLocalVariable(localVariableCriterion)){
 					nodeCriteria.add(pdgNode);
+				}
+				
 			}
 			return nodeCriteria;
 		}
