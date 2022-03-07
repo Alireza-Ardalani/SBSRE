@@ -1,37 +1,68 @@
-<h1>SBSRE</h1>
-<h4>An eclipse plugin for identifying Single responsibility violations in the methods.</h3>
+# SBSRE
+SBSRE is a **slice-based single responsibility extraction** approach supported by an **eclipse plugin** for identifying Single responsibility violations in the methods.
 
-<h2>Use SBSRE by following these steps:</h2>
+The responsibility of a method can be best described by its impacts on the outer scope that are exposed through modifying the return values, outputs, and global variables. In the context of object-oriented programming, a method may modify either the class fields or return a value to its caller method. If the corresponding slices of these fields or return values within the method body are entirely separate, the method presumably exposes different functionalities.
 
-<h3>Step1: For using SBSRE, It is recommended to use the Eclipse Neon.</h3>
-
-<a href="https://www.eclipse.org/downloads/packages/release/neon/3/eclipse-ide-java-ee-developers">Eclipse Neon download link</a>
+Existing extract method refactoring tools do not pay serious attention to these so-called output instructions and the output variables while searching for extract method candidates, which results in imprecise refactoring opportunity detection from the developer's viewpoint. We introduce a new **Output-based Slicing** algorithm, focused on extracting chunks of codes that commit to the specific output from the body of long methods.
 
 
-<h3>Step2: Import the SBSRE in the Eclipse.</h3>
+
+## Relevant publications
+To be announced.
+
+
+
+## Getting started
+
+### Step1: Prerequisites
+
+It is recommended to use the Eclipse Neon IDE with JDK 1.8.x for lunching our SBSRE tool 
+
+* [Download Eclipse Neon](https://www.eclipse.org/downloads/packages/release/neon/3/eclipse-ide-java-ee-developers)
+
+* [Download JDK 8](https://www.oracle.com/java/technologies/downloads/)
+
+
+### Step2: Import the SBSRE tool
+
+ Import the SBSRE tool in the Eclipse IDE
 
 <p align = "center"> <img src = "image/Step2.png"> </p>
-<p align = "center"> Step2 </p>
+<p align = "center"> Figure 1. Operations of Step 2. </p>
 
-<h3>Step3: Run the SBSRE plugin in the Eclipse.</h3>
+
+
+### Step3: Run the SBSRE tool 
+
+Run the SBSRE tool as as a plugin in the Eclipse IDE
 
 <p align = "center"> <img src = "image/Step3.png"> </p>
-<p align = "center"> Step3 </p>
+<p align = "center"> Figure 2. Operations of Step 3. </p>
 
-<h3>Step4: Insert or create a java project, then on Bad Smells tab, choose SRP-Violation. </h3>
+
+
+### Step4: Open SRP-Violation window
+
+Insert or create a java project, then on Bad Smells tab, choose SRP-Violation
 
 <p align = "center"> <img src = "image/Step4.png"> </p>
-<p align = "center"> Step4 </p>
+<p align = "center"> Figure 3. Operations of Step 4. </p>
 
 
-<h3>Step5: By clicking on each of the packages, classes, or methods, it will be selected. Then by clicking on the "i" icon, results will be shown. </h3>
+### Step5: Identifying SRP-Violation
+
+By clicking on each of the packages, classes, or methods, it will be selected. Then by clicking on the "i" icon, results will be shown.
 
 <p align = "center"> <img src = "image/Step5.png"> </p>
-<p align = "center"> Step5 </p>
+<p align = "center"> Figure 4. Operations of Step 5. </p>
 
-<h3>Step6: Results are shown here and by selecting each of them, a code fragment proposed for method extraction will be highlighted. </h3>
+
+
+### Step6: 
+
+Results are shown here and by selecting each of them, a code fragment proposed for method extraction will be highlighted.
 
 <p align = "center"> <img src = "image/Step6.png"> </p>
-<p align = "center"> Step6 </p>
+<p align = "center"> Figure 5. Operations of Step 6. </p>
 
 
