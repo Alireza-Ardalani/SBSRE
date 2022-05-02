@@ -1,3 +1,4 @@
+
 package gr.uom.java.jdeodorant.refactoring.views;
 
 import java.awt.Color;
@@ -107,6 +108,10 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+
+/**
+ *Mr.Zakeri
+ **/
 public class SingleResponsibilityViolation extends ViewPart {
 	private static final String MESSAGE_DIALOG_TITLE = "SRP-Violation";
 	private TreeViewer treeViewer;
@@ -814,94 +819,62 @@ public class SingleResponsibilityViolation extends ViewPart {
 				PDG pdg = new PDG(cfg, classObject.getIFile(), classObject.getFieldsAccessedInsideMethod(methodObject), null);
 				
 				////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				
-				boolean check=false;
-				
+
 				List<PlainVariable> targetList = new ArrayList<PlainVariable>();
 				targetList=pdg.variableOutput();
-				
 				List<Integer> First = new ArrayList<Integer>();
 				First=pdg.FirstPDGNode();
-				
 				List<Integer> Last = new ArrayList<Integer>();
 				Last=pdg.LastPDGNode();
 				
-				List<Integer> typeOutput = new ArrayList<Integer>();
-				typeOutput=pdg.typeOutput();
+				Set<PlainVariable>  ObjectList = new LinkedHashSet<PlainVariable>();
+				ObjectList = pdg.getObjectInMethodInvovation();
 				
-				List<String> targetListClear = new ArrayList<String>();
-				List<Integer> KatalanMain = new ArrayList<Integer>();
-				
-				Map<PlainVariable, Integer> alfi = new  HashMap<PlainVariable, Integer>();
-				alfi= pdg.alfa();
-				
-				/*
-				System.out.println("YYYYYYYYYYYYYYY");
-				System.out.println(alfi.toString());
-				System.out.println("YYYYYYYYYYYYYYY");
-				*/
-				
-				System.out.println("UUUUUUuuuuuuUUUUUU");
-				
-				 for (PlainVariable A : targetList){
-					 System.out.println(A.toString());
-					 }
-				 for (Integer A : First){
-					 System.out.println(A.toString());
-					 }
-				 System.out.println("UUUUUUuuuuuuUUUUUU");
-				 for (Integer A : Last){
-					 System.out.println(A.toString());
-					 }
-				 System.out.println("UUUUUUuuuuuuUUUUUU");
+				for(PlainVariable o : ObjectList){
+					System.out.println("objectList "+ o);
+					
+				}
+
 				 
-				 
-				 
-				 
-				 
-				 System.out.println("typeOutPut");
-				 for (Integer A : typeOutput){
-					 System.out.println(A.toString());
-					 }
-				 
-				 for (PlainVariable A : targetList){
-					 check=false;
-					 for(String B : targetListClear){
-						 if(A.toString().equals(B)){
-							 check=true; 
-						 }
-					 }
-					 if(!check){
-						 targetListClear.add(A.toString());
-					 }	 
+				 for(int x=0;x<Last.size();x++){
+					 System.out.println(targetList.get(x).toString());
+					 System.out.println(First.get(x).toString());
+					 System.out.println(Last.get(x).toString());
+					 
 				 }
+					for(PlainVariable variable : ObjectList) {	
+						PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,1000,2);
+						
+						double sumOfExtractedStatementsInGroup = 0.0;
+						double sumOfDuplicatedStatementsInGroup = 0.0;
+						double sumOfDuplicationRatioInGroup = 0.0;
+						int maximumNumberOfExtractedStatementsInGroup = 0;
+						int groupSize = sliceUnionCollection.getSliceUnions().size();
+						ASTSliceGroup sliceGroup = new ASTSliceGroup();
+						for(PDGSliceUnion sliceUnion : sliceUnionCollection.getSliceUnions()) {
+							ASTSlice slice = new ASTSlice(sliceUnion);
+							if(!slice.isVariableCriterionDeclarationStatementIsDeeperNestedThanExtractedMethodInvocationInsertionStatement()) {
+								int numberOfExtractedStatements = slice.getNumberOfSliceStatements();
+								int numberOfDuplicatedStatements = slice.getNumberOfDuplicatedStatements();
+								double duplicationRatio = (double)numberOfDuplicatedStatements/(double)numberOfExtractedStatements;
+								sumOfExtractedStatementsInGroup += numberOfExtractedStatements;
+								sumOfDuplicatedStatementsInGroup += numberOfDuplicatedStatements;
+								sumOfDuplicationRatioInGroup += duplicationRatio;
+								if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
+									maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
+									slice.SetType("LOL");
+								sliceGroup.addCandidate(slice);	
+							}
+						}
+						if(!sliceGroup.getCandidates().isEmpty()) {
+							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
+							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
+							extractedSliceGroups.add(sliceGroup);
+						}
+					}
 				 
-				 for (String C : targetListClear){
-					 int katalan=0;
-					 for(PlainVariable A : targetList){
-						 if(A.toString().equals(C)){
-							 katalan++; 
-						 }
-					 }
-					 KatalanMain.add(katalan);
-					 }
-				 int andiss=0;
-				 System.out.println("targetClear");
-				 System.out.println("katalanmain");
-				 for (String C : targetListClear){
-					 System.out.println(C);
-					 System.out.println(KatalanMain.get(andiss));
-					 andiss++;
-					 }
-				 
-				 
-				 System.out.println("WWWWWwwwwwWWWWWW");
-				
-				
-				 
-				
-				int KK=0;
 				int andis=0;
 				for(PlainVariable variable : targetList) {	
 					Integer F =First.get(andis);
@@ -929,6 +902,8 @@ public class SingleResponsibilityViolation extends ViewPart {
 							sliceGroup.addCandidate(slice);	
 						}
 					}
+					
+					//sliceGroup.addCandidate();
 					if(!sliceGroup.getCandidates().isEmpty()) {
 						sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
 						sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);

@@ -39,7 +39,6 @@ public class PDGSlice extends Graph {
 		//CommentAlireza: for loop add all or some code of variable&if&for&.....
 		for(PDGNode node : regionNodes) {
 			nodes.add(node);		
-			//System.out.println(node.toString());
 		}
 		for(GraphEdge edge : pdg.edges) {
 			PDGDependence dependence = (PDGDependence)edge;
@@ -85,13 +84,6 @@ public class PDGSlice extends Graph {
 		this.nodeCriterion = nodeCriterion;
 		this.localVariableCriterion = localVariableCriterion;
 		this.sliceNodes = new TreeSet<PDGNode>();
-		
-		//comment-alireza : this method not use!!
-		System.out.println("case3");
-		System.out.println(this.localVariableCriterion.getVariableName().toString()+"-->localVariableCriterion");
-		System.out.println(this.nodeCriterion.toString()+"-->nodeCriterion");
-		
-		
 		sliceNodes.addAll(computeSlice(nodeCriterion, localVariableCriterion));
 		this.remainingNodes = new TreeSet<PDGNode>();
 		remainingNodes.add(pdg.getEntryNode());
@@ -444,7 +436,6 @@ public class PDGSlice extends Graph {
 	}
 
 	public Set<PDGNode> computeSlice(PDGNode nodeCriterion, AbstractVariable localVariableCriterion) {
-		System.out.println("case-2+1 : PDGSlice-method");
 		Set<PDGNode> sliceNodes = new LinkedHashSet<PDGNode>();
 		if(nodeCriterion.definesLocalVariable(localVariableCriterion)) {
 			sliceNodes.addAll(traverseBackward(nodeCriterion, new LinkedHashSet<PDGNode>()));
@@ -460,7 +451,6 @@ public class PDGSlice extends Graph {
 	}
 
 	public Set<PDGNode> computeSlice(PDGNode nodeCriterion) {
-		System.out.println("case-2+2 : PDGSlice-method");
 		Set<PDGNode> sliceNodes = new LinkedHashSet<PDGNode>();
 		sliceNodes.addAll(traverseBackward(nodeCriterion, new LinkedHashSet<PDGNode>()));
 		return sliceNodes;
@@ -496,10 +486,8 @@ public class PDGSlice extends Graph {
 		return sliceNodes;
 	}
 
-	public String toString() {
-		//comment-alireza : this method not use !		
+	public String toString() {	
 		return "<" + localVariableCriterion + ", " + nodeCriterion.getId() + "> [B" + boundaryBlock.getId() + "]\n" +
 		sliceNodes + "\npassed parameters: " + passedParameters + "\nindispensable nodes: " + indispensableNodes;
-		
 	}
 }

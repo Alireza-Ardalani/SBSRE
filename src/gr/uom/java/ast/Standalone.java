@@ -192,17 +192,7 @@ public class Standalone {
 				////////////////////////////////////////////////////////////////////////////////////////////////
 				List<PlainVariable> targetList = new ArrayList<PlainVariable>();
 				targetList=pdg.variableOutput();
-				List<Integer> typeOutput = new ArrayList<Integer>();
-				typeOutput=pdg.typeOutput();
-				
-				System.out.println("UUUUUUuuuuuuUUUUUU");
-				 for (PlainVariable A : targetList){
-					 System.out.println(A.toString());
-					 }
-				 for (Integer A : typeOutput){
-					 System.out.println(A.toString());
-					 }
-				
+
 				
 				int andis=0;
 				

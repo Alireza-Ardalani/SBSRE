@@ -13,6 +13,7 @@ import gr.uom.java.ast.VariableDeclarationObject;
 import gr.uom.java.ast.decomposition.AbstractStatement;
 import gr.uom.java.ast.util.ExpressionExtractor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -35,6 +36,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 public class PDGNode extends GraphNode implements Comparable<PDGNode> {
+	
+	public List<Integer> MethodInvocationStartPosition ; //New-SBSRE
 	private CFGNode cfgNode;
 	protected Set<AbstractVariable> declaredVariables;
 	protected Set<AbstractVariable> definedVariables;
@@ -54,6 +57,7 @@ public class PDGNode extends GraphNode implements Comparable<PDGNode> {
 		this.usedVariables = new LinkedHashSet<AbstractVariable>();
 		this.createdTypes = new LinkedHashSet<CreationObject>();
 		this.thrownExceptionTypes = new LinkedHashSet<String>();
+		this.MethodInvocationStartPosition= new  ArrayList<Integer>(); //New-SBSRE
 	}
 	
 	public PDGNode(CFGNode cfgNode, Set<VariableDeclarationObject> variableDeclarationsInMethod,
@@ -69,6 +73,7 @@ public class PDGNode extends GraphNode implements Comparable<PDGNode> {
 		this.usedVariables = new LinkedHashSet<AbstractVariable>();
 		this.createdTypes = new LinkedHashSet<CreationObject>();
 		this.thrownExceptionTypes = new LinkedHashSet<String>();
+		this.MethodInvocationStartPosition= new  ArrayList<Integer>(); //New-SBSRE
 		this.methodCallAnalyzer = new MethodCallAnalyzer(definedVariables, usedVariables, thrownExceptionTypes, this.variableDeclarationsInMethod);
 	}
 
@@ -301,6 +306,16 @@ public class PDGNode extends GraphNode implements Comparable<PDGNode> {
 	protected void processArgumentsOfInternalMethodInvocation(MethodInvocationObject methodInvocationObject, AbstractVariable variable) {
 		SystemObject systemObject = ASTReader.getSystemObject();
 		MethodInvocation methodInvocation = methodInvocationObject.getMethodInvocation();
+		//System.err.println(methodInvocation.getName().toString());
+		//System.err.println(methodInvocation.getExpression().toString());
+		//System.err.println(methodInvocation.getStartPosition());
+		//System.err.println(methodInvocationObject.getParameterList().toString());
+		//System.out.println(methodInvocation.getName().toString());
+		//System.out.println(methodInvocation.arguments().toString());
+		
+		MethodInvocationStartPosition.add(methodInvocation.getStartPosition()); //New-SBSRE
+		
+		
 		IMethodBinding methodBinding = methodInvocation.resolveMethodBinding();
 		ClassObject classObject = systemObject.getClassObject(methodInvocationObject.getOriginClassName());
 		MethodObject methodObject = null;
@@ -311,6 +326,7 @@ public class PDGNode extends GraphNode implements Comparable<PDGNode> {
 			//classObject == null => external method call
 			//methodObject != null => the internal method might not exist, in the case of built-in enumeration methods, such as values() and valueOf()
 			methodCallAnalyzer.processArgumentsOfInternalMethodInvocation(classObject, methodObject, methodInvocation.arguments(), methodBinding, variable);
+			
 		}
 	}
 

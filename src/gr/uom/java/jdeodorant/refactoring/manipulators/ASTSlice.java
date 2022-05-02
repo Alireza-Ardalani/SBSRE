@@ -431,7 +431,6 @@ public class ASTSlice {
 		int numberOfDuplicatedStatements = numberOfSliceStatements - numberOfRemovableStatements;
 		return numberOfDuplicatedStatements;
 	}
-
 	public Integer getUserRate() {
 		return userRate;
 	}

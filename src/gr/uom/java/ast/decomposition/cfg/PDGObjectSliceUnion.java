@@ -609,7 +609,6 @@ public class PDGObjectSliceUnion {
 			}	
 		 }
 	  }
-		
 		if(result){
 			return false;
 		}

@@ -80,6 +80,8 @@ public class PDGSliceUnion {
 				}
 			}
 		}
+		
+
 		sliceNodes.addAll(nodesToBeAddedToSliceDueToDependenceOnObjectStateSlices);
 		Set<PDGNode> throwStatementNodes = getThrowStatementNodesWithinRegion();
 		Set<PDGNode> nodesToBeAddedToSliceDueToThrowStatementNodes = new TreeSet<PDGNode>();
@@ -489,8 +491,8 @@ public class PDGSliceUnion {
 
 	private boolean complyWithUserThresholds() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		int minimumSliceSize = store.getInt(PreferenceConstants.P_MINIMUM_SLICE_SIZE);
-		//int minimumSliceSize = 3;
+		//int minimumSliceSize = store.getInt(PreferenceConstants.P_MINIMUM_SLICE_SIZE);
+		int minimumSliceSize = 2;
 		int maximumSliceSize = store.getInt(PreferenceConstants.P_MAXIMUM_SLICE_SIZE);
 		int maximumDuplication = store.getInt(PreferenceConstants.P_MAXIMUM_DUPLICATION);
 		double maximumRatioOfDuplicatedToExtracted = store.getDouble(
@@ -558,8 +560,8 @@ public class PDGSliceUnion {
 		if(size==1){
 			for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {	
 				PlainVariable variable = new PlainVariable(declaration);
-				System.out.println("><><><><<><><>><><><");
-				System.out.println(variable.toString());
+				//System.out.println("><><><><<><><>><><><");
+				//System.out.println(variable.toString());
 				boolean temp=false;
 				
 				for(GraphNode node : sliceNodes) {
@@ -573,12 +575,12 @@ public class PDGSliceUnion {
 				}
 				
 				if(!temp){
-					System.err.println(variable.toString());
+					//System.err.println(variable.toString());
 					return false;
 				}
 
 			}
-			System.err.println("MOSHKELeeeeeeee");
+			//System.err.println("MOSHKELeeeeeeee");
 			return true;
 		}
 		else{
@@ -589,12 +591,6 @@ public class PDGSliceUnion {
 		boolean temp=false;
 		for(GraphNode node : sliceNodes) {
 			PDGNode pdgNode = (PDGNode)node;
-			System.out.println("|||||||||||||");
-			System.out.println(First);
-			System.out.println(pdgNode.getId());
-			System.out.println(Last);
-			System.out.println("||||||||||||");
-			
 			if(pdgNode.getId() > First && pdgNode.getId() <=Last){
 				
 			}
@@ -635,64 +631,5 @@ public class PDGSliceUnion {
 				return true;
 	}
 	
-	public String satisfiesRules1() {
-		String alfa="";
-		if(sliceEqualsMethodBody()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(sliceNodes.size() <= nodeCriteria.size()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(allNodeCriteriaAreDuplicated()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(containsDuplicateNodeWithStateChangingMethodInvocation()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(duplicatedSliceNodeWithClassInstantiationHasDependenceOnRemovableNode()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(!complyWithUserThresholds()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		if(sliceContainsBranchStatementWithoutInnermostLoop()){
-			alfa=alfa+"0";
-		}
-		else{
-			alfa=alfa+"1";
-		}
-		return alfa;
-
-	}
 //nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() hazf shode baraye moshkele adam daryaf slice ha
 }
