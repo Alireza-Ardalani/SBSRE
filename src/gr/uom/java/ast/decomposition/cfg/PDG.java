@@ -453,11 +453,76 @@ public class PDG extends Graph {
 					}
 					 else if (pdgNode.getId()==Last && pdgNode.usesLocalVariable(localVariableCriterion)){
 						 if(!(pdgNode instanceof PDGExitNode)){
-							 nodeCriteria.add(pdgNode); 
+							 String MethodInvocer = "";
+							 int Counter = 0;
+							 System.out.println("??????");
+							 int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size()-1;
+							 MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);
+							 if(M.getMethodInvocation().getExpression() != null){
+								 MethodInvocer = M.getMethodInvocation().getExpression().toString();
+							 }
+							 for(VariableDeclaration declaration : getVariableDeclarationsInMethod()){
+								 PlainVariable localVariable = new PlainVariable(declaration);
+								 if(pdgNode.usesLocalVariable(localVariable)){
+									 if( !(localVariable.toString().equals(MethodInvocer)) && !(localVariable.toString().equals(localVariableCriterion.toString()))){
+										 Counter++;
+									 }
+									 
+								 }
+							 }
+							 System.out.println(Counter);
+							 System.out.println("??///////???");
+							 
+							 if(Counter == 0 ){
+								 nodeCriteria.add(pdgNode);  
+							 }
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 /*
+							 for(VariableDeclaration declaration : getVariableDeclarationsInMethod()){
+									PlainVariable localVariable = new PlainVariable(declaration);
+									int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size()-1;
+									MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);
+									if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
+										for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
+											if(M.getMethodInvocation().getExpression() != null){
+												if(P.toString().equals(M.getMethodInvocation().getExpression().toString())){
+													
+												}
+												else{
+													if(pdgNode.usesLocalVariable(localVariable)){
+														System.out.println("KHOOO "+localVariable.toString());
+														Counter++;
+													}
+												}
+											}
+											else{
+												if(pdgNode.usesLocalVariable(localVariable)){
+													System.out.println("KHOOO "+localVariable.toString());
+													Counter++;
+												}
+											}
+										}
+										
+									}
+	
+							 }
+							 
+							 if(Counter <= 1){
+								 nodeCriteria.add(pdgNode);  
+							 }
+							 */
+
+							 
 						 }
 						 
 					 }
-
 			}
 		return nodeCriteria;
 	   }
