@@ -551,15 +551,14 @@ public class PDGObjectSliceUnion {
 		}
 		return false;
 	}
-	private boolean alfa(){
+	private boolean sliceSameAsOrginalMethod(){
 		List<PlainVariable> targetList = new ArrayList<PlainVariable>();
 		targetList=pdg.variableOutput();
 		int size= targetList.size();
 		if(size==1){
 			for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {	
 				PlainVariable variable = new PlainVariable(declaration);
-				boolean temp=false;
-				
+				boolean temp=false;	
 				for(GraphNode node : sliceNodes) {
 					PDGNode pdgNode = (PDGNode)node;
 					if(pdgNode.definesLocalVariable(variable)){
@@ -570,7 +569,6 @@ public class PDGObjectSliceUnion {
 					}
 				}		
 				if(!temp){
-					System.err.println(variable.toString());
 					return false;
 				}
 
@@ -581,13 +579,12 @@ public class PDGObjectSliceUnion {
 			return false;
 		}
 	}
-	private boolean  beta(){
+	private boolean  sliceSameAsOrginalMethodSecond(){
 		boolean result=false;
 		Set<GraphNode> Nodes = pdg.sendGraphNode();
 		for(GraphNode node : Nodes){
 			PDGNode pdgNode = (PDGNode)node;
 			boolean temp=true;
-			//System.out.println(pdgNode.toString());
 			for(GraphNode node1 : sliceNodes){
 				PDGNode pdgNode1 = (PDGNode)node1;
 				if(pdgNode.toString().equals(pdgNode1.toString())){
@@ -595,11 +592,9 @@ public class PDGObjectSliceUnion {
 				}
 			}
 			if(temp){
-				//System.out.println(pdgNode.toString());
 				for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {
 					PlainVariable variable = new PlainVariable(declaration);
-				if(pdgNode.toString().contains("return")){
-					
+				if(pdgNode instanceof PDGExitNode){
 				}
 				else{
 					if(pdgNode.definesLocalVariable(variable)){
@@ -629,7 +624,7 @@ public class PDGObjectSliceUnion {
 		return true;
 	}
 	public boolean satisfiesRulesSRP() {
-		if(objectSliceEqualsMethodBody() || objectSliceHasMinimumSize() || alfa() || beta() ||
+		if(objectSliceEqualsMethodBody() || objectSliceHasMinimumSize() || sliceSameAsOrginalMethod() || sliceSameAsOrginalMethodSecond() ||
 				allNodeCriteriaAreDuplicated() ||
 				containsDuplicateNodeWithStateChangingMethodInvocation() ||
 				nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||

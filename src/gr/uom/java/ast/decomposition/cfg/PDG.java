@@ -237,15 +237,17 @@ public class PDG extends Graph {
 		return definedPropertiesMap;
 	}
 	
+	// SBSRE:  Add variableOutput() method
+	// =>
+	
 	public List<PlainVariable> variableOutput(){
 		List<PlainVariable> outputVariableList = new ArrayList<PlainVariable>();
 		for(GraphNode node : nodes){
 			PDGNode pdgNode = (PDGNode)node;
 			if(pdgNode instanceof PDGExitNode){
 				if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-					for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
-						//System.out.println("2222: " + P.toString());
-						outputVariableList.add(P);
+					for (PlainVariable plainVariable : pdgNode.getStatement().getUsedLocalVariables()){
+						outputVariableList.add(plainVariable);
 					}
 				}
 			}
@@ -256,28 +258,23 @@ public class PDG extends Graph {
 						ExpressionStatement expressionStatement = (ExpressionStatement)statement;
 						Expression expression = expressionStatement.getExpression();
 						if(!(expression instanceof Assignment)) {			
-							//baraye node haii ke chand method dron ham hast ma on method asli ra mikhahim baghiye ....
-							int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
-							I--;
-							MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);							
-							// empty bodan ya error ijad mikonad ya null dar list darj mikonad ma nemikhahim hich kodam ra
+							int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
+							InvocationPlace--;
+							MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);							
 							if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-								for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
-									if(M.getMethodInvocation().getExpression() != null){
-										if(P.toString().equals(M.getMethodInvocation().getExpression().toString())){	
-											//System.out.println("11111: " + P.toString());
-											if(!objectsInMethodIvocation.contains(P)){
-											objectsInMethodIvocation.add(P);
+								for (PlainVariable plainVariable : pdgNode.getStatement().getUsedLocalVariables()){
+									if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+										if(plainVariable.toString().equals(methodInvocationObject.getMethodInvocation().getExpression().toString())){	
+											if(!objectsInMethodIvocation.contains(plainVariable)){
+											objectsInMethodIvocation.add(plainVariable);
 											}
 										}
 										else{
-											//System.out.println("22222: " + P.toString());
-											outputVariableList.add(P);
+											outputVariableList.add(plainVariable);
 										}
 									}
 									else{
-										//System.out.println("22222: " + P.toString());
-										outputVariableList.add(P);
+										outputVariableList.add(plainVariable);
 									}
 								}
 								
@@ -292,14 +289,18 @@ public class PDG extends Graph {
 	}
 		return outputVariableList;
 }
+	
+	
+	// SBSRE:  Add LastPDGNode() method
+	// =>
+	
 	public  List<Integer> LastPDGNode(){
 		List<Integer> LastPDGNode= new  ArrayList<Integer>();
 		for(GraphNode node : nodes){
 			PDGNode pdgNode = (PDGNode)node;
 			if(pdgNode instanceof PDGExitNode){
 				if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-					for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
-						//System.out.println("2222: " + P.toString());
+					for (PlainVariable variable : pdgNode.getStatement().getUsedLocalVariables()){
 						LastPDGNode.add(pdgNode.getId());
 					}
 				}
@@ -311,24 +312,19 @@ public class PDG extends Graph {
 						ExpressionStatement expressionStatement = (ExpressionStatement)statement;
 						Expression expression = expressionStatement.getExpression();
 						if(!(expression instanceof Assignment)) {			
-							//baraye node haii ke chand method dron ham hast ma on method asli ra mikhahim baghiye ....
-							int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
-							I--;
-							MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);							
-							// empty bodan ya error ijad mikonad ya null dar list darj mikonad ma nemikhahim hich kodam ra
+							int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
+							InvocationPlace--;
+							MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);							
 							if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-								for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
-									if(M.getMethodInvocation().getExpression() != null){
-										if(P.toString().equals(M.getMethodInvocation().getExpression().toString())){	
-											//System.out.println("11111: " + P.toString());
+								for (PlainVariable plainVariable : pdgNode.getStatement().getUsedLocalVariables()){
+									if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+										if(plainVariable.toString().equals(methodInvocationObject.getMethodInvocation().getExpression().toString())){	
 										}
 										else{
-											//System.out.println("22222: " + P.toString());
 											LastPDGNode.add(pdgNode.getId());
 										}
 									}
 									else{
-										//System.out.println("22222: " + P.toString());
 										LastPDGNode.add(pdgNode.getId());
 									}
 								}
@@ -338,14 +334,13 @@ public class PDG extends Graph {
 						}
 					}
 				}
-			
 		}
-		
 	}
 		return LastPDGNode;
 }
-
-	public Map<PlainVariable, Integer> alfa(){
+	// SBSRE:  Add outputVariableCounter() method
+	// =>
+	public Map<PlainVariable, Integer> outputVariableCounter(){
 		Map<PlainVariable, Integer> dictionary = new HashMap<PlainVariable, Integer>();
 		List<PlainVariable> targetList = variableOutput();
 		for(PlainVariable Variable :targetList ){
@@ -355,9 +350,9 @@ public class PDG extends Graph {
 				dictionary.put(Variable, 0);
 				for(PlainVariable Variable1 :targetList ){
 					if(Variable.equals(Variable1)){
-						Integer x= dictionary.get(Variable);
-						x++;
-						dictionary.replace(Variable, x);
+						Integer count= dictionary.get(Variable);
+						count++;
+						dictionary.replace(Variable, count);
 					}
 				}
 			}
@@ -365,42 +360,45 @@ public class PDG extends Graph {
 		}
 		return dictionary;
 	}
-		
+	
+	// SBSRE:  Add FirstPDGNode() method
+	// =>
 	public  List<Integer> FirstPDGNode(){
+		
 	List<Integer> FirstPDGNode= new  ArrayList<Integer>();
 	List<Integer> LastPDGNode = LastPDGNode();
 	List<PlainVariable> targetList = variableOutput();
-	Map<PlainVariable, Integer> orginal = alfa();
-	Map<PlainVariable, Integer> temp = alfa();
+	Map<PlainVariable, Integer> orginal = outputVariableCounter();
+	Map<PlainVariable, Integer> temp = outputVariableCounter();
 	
 	for (PlainVariable variable : targetList){
 		if(orginal.get(variable) == temp.get(variable)){
 			FirstPDGNode.add(0);
-			Integer x= temp.get(variable);
-			x--;
-			temp.replace(variable, x);	
+			Integer countOfVariable = temp.get(variable);
+			countOfVariable--;
+			temp.replace(variable,countOfVariable);	
 		}
-		else if(temp.get(variable)==0){
+		else if(temp.get(variable) == 0){
 			continue;
 		}
 		else{
-			Integer x = orginal.get(variable) - temp.get(variable);
-			int z = 0;
-			for (PlainVariable variable1 : targetList){
-				if(variable.equals(variable1)){
-					if(x==1){
-						FirstPDGNode.add(LastPDGNode.get(z));
+			Integer countOfVariable = orginal.get(variable) - temp.get(variable);
+			int counter = 0;
+			for (PlainVariable plainVariable : targetList){
+				if(variable.equals(plainVariable)){
+					if(countOfVariable == 1){
+						FirstPDGNode.add(LastPDGNode.get(counter));
 						break;
 					}
 					else{
-						x--;
+						countOfVariable--;
 					}
 				}
-				z++;
+				counter++;
 			}
-			Integer m= temp.get(variable);
-			m--;
-			temp.replace(variable, m);	
+			Integer locationOfVariable= temp.get(variable);
+			locationOfVariable--;
+			temp.replace(variable,locationOfVariable);	
 		}
 	}
 	
@@ -410,6 +408,9 @@ public class PDG extends Graph {
 	public Set<GraphNode> sendGraphNode() {
 		return nodes;
 	}
+	
+	// SBSRE:  Add getAssignmentNodesOfVariableCriterionOutputObject() method
+	// =>
 	public Set<PDGNode> getAssignmentNodesOfVariableCriterionOutputObject(AbstractVariable localVariableCriterion) {
 		Set<PDGNode> nodeCriteria = new LinkedHashSet<PDGNode>();
 		for(GraphNode node : nodes) {
@@ -421,12 +422,12 @@ public class PDG extends Graph {
 						ExpressionStatement expressionStatement = (ExpressionStatement)statement;
 						Expression expression = expressionStatement.getExpression();
 						if(!(expression instanceof Assignment)) {			
-							int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
-							I--;
-							MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);							
+							int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
+							InvocationPlace--;
+							MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);							
 							if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-									if(M.getMethodInvocation().getExpression() != null){
-										if(localVariableCriterion.toString().equals(M.getMethodInvocation().getExpression().toString())){
+									if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+										if(localVariableCriterion.toString().equals(methodInvocationObject.getMethodInvocation().getExpression().toString())){
 											nodeCriteria.add(pdgNode);
 										}
 									}
@@ -441,12 +442,38 @@ public class PDG extends Graph {
 		return nodeCriteria;
 	}
 	
-	
+	// SBSRE:  Add getAssignmentNodesOfVariableCriterionOutput() method
+	// =>
 		public Set<PDGNode> getAssignmentNodesOfVariableCriterionOutput(AbstractVariable localVariableCriterion , Integer First,Integer Last) {
 		Set<PDGNode> nodeCriteria = new LinkedHashSet<PDGNode>();
-
+		boolean CompositeVariable = isCompositeVariable(localVariableCriterion);
 			for(GraphNode node : nodes) {
 				PDGNode pdgNode = (PDGNode)node;
+				if(CompositeVariable){
+					if(pdgNode instanceof PDGStatementNode){
+						if(!pdgNode.getCFGNode().getStatement().getMethodInvocations().isEmpty()){
+							Statement statement = pdgNode.getCFGNode().getASTStatement();
+							 if(statement instanceof ExpressionStatement) {
+								ExpressionStatement expressionStatement = (ExpressionStatement)statement;
+								Expression expression = expressionStatement.getExpression();
+								if(!(expression instanceof Assignment)) {			
+									int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
+									InvocationPlace--;
+									MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);							
+									if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
+											if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+												if(localVariableCriterion.toString().equals(methodInvocationObject.getMethodInvocation().getExpression().toString())){
+													nodeCriteria.add(pdgNode);
+												}
+											}
+									}
+								}
+							}
+						}
+					}
+					
+				}
+				else{
 					 if(pdgNode.definesLocalVariable(localVariableCriterion) && !pdgNode.declaresLocalVariable(localVariableCriterion) 
 							 && pdgNode.getId() > First && pdgNode.getId() < Last ){
 							nodeCriteria.add(pdgNode);
@@ -455,11 +482,10 @@ public class PDG extends Graph {
 						 if(!(pdgNode instanceof PDGExitNode)){
 							 String MethodInvocer = "";
 							 int Counter = 0;
-							 System.out.println("??????");
-							 int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size()-1;
-							 MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);
-							 if(M.getMethodInvocation().getExpression() != null){
-								 MethodInvocer = M.getMethodInvocation().getExpression().toString();
+							 int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size()-1;
+							 MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);
+							 if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+								 MethodInvocer = methodInvocationObject.getMethodInvocation().getExpression().toString();
 							 }
 							 for(VariableDeclaration declaration : getVariableDeclarationsInMethod()){
 								 PlainVariable localVariable = new PlainVariable(declaration);
@@ -470,62 +496,18 @@ public class PDG extends Graph {
 									 
 								 }
 							 }
-							 System.out.println(Counter);
-							 System.out.println("??///////???");
-							 
 							 if(Counter == 0 ){
 								 nodeCriteria.add(pdgNode);  
-							 }
-							 
-							 
-							 
-							 
-							 
-							 
-							 
-							 
-							 /*
-							 for(VariableDeclaration declaration : getVariableDeclarationsInMethod()){
-									PlainVariable localVariable = new PlainVariable(declaration);
-									int I = pdgNode.getCFGNode().getStatement().getMethodInvocations().size()-1;
-									MethodInvocationObject M = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(I);
-									if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
-										for (PlainVariable P : pdgNode.getStatement().getUsedLocalVariables()){
-											if(M.getMethodInvocation().getExpression() != null){
-												if(P.toString().equals(M.getMethodInvocation().getExpression().toString())){
-													
-												}
-												else{
-													if(pdgNode.usesLocalVariable(localVariable)){
-														System.out.println("KHOOO "+localVariable.toString());
-														Counter++;
-													}
-												}
-											}
-											else{
-												if(pdgNode.usesLocalVariable(localVariable)){
-													System.out.println("KHOOO "+localVariable.toString());
-													Counter++;
-												}
-											}
-										}
-										
-									}
-	
-							 }
-							 
-							 if(Counter <= 1){
-								 nodeCriteria.add(pdgNode);  
-							 }
-							 */
-
-							 
-						 }
-						 
+							 } 
+						 } 
 					 }
+					
+				}
 			}
 		return nodeCriteria;
 	   }
+		
+		
 		public Set<PDGNode> getAssignmentNodesOfVariableCriterion(AbstractVariable localVariableCriterion) {
 			Set<PDGNode> nodeCriteria = new LinkedHashSet<PDGNode>();
 			for(GraphNode node : nodes) {
@@ -538,10 +520,7 @@ public class PDG extends Graph {
 			}
 			return nodeCriteria;
 		}
-		
 
-
-	
 	
 	public Set<PDGNode> getAssignmentNodesOfVariableCriterionIncludingDeclaration(AbstractVariable localVariableCriterion) {
 		Set<PDGNode> nodeCriteria = new LinkedHashSet<PDGNode>();
@@ -781,8 +760,6 @@ public class PDG extends Graph {
 	}
 
 	private void createControlDependenciesFromEntryNode() {
-		//System.out.println("case1+3");
-		
 		for(GraphNode node : cfg.nodes) {
 			CFGNode cfgNode = (CFGNode)node;
 			if(!isNested(cfgNode)) {
@@ -1164,5 +1141,38 @@ public class PDG extends Graph {
 				return pdgNode;
 		}
 		return null;
+	}
+	
+	// SBSRE: Add isCompositeVariable() method
+	// => Simple and composite variables can be detected with the help of this method for output slicing
+	
+	boolean isCompositeVariable(AbstractVariable Variable){
+		boolean compositeVariable =  false;	
+		for(GraphNode node : nodes) {
+			PDGNode pdgNode = (PDGNode)node;
+			if(pdgNode instanceof PDGStatementNode){
+				if(!pdgNode.getCFGNode().getStatement().getMethodInvocations().isEmpty()){
+					Statement statement = pdgNode.getCFGNode().getASTStatement();
+					 if(statement instanceof ExpressionStatement) {
+						ExpressionStatement expressionStatement = (ExpressionStatement)statement;
+						Expression expression = expressionStatement.getExpression();
+						if(!(expression instanceof Assignment)) {			
+							int InvocationPlace = pdgNode.getCFGNode().getStatement().getMethodInvocations().size();
+							InvocationPlace--;
+							MethodInvocationObject methodInvocationObject = pdgNode.getCFGNode().getStatement().getMethodInvocations().get(InvocationPlace);							
+							if(!pdgNode.getStatement().getUsedLocalVariables().isEmpty()){
+									if(methodInvocationObject.getMethodInvocation().getExpression() != null){
+										if(Variable.toString().equals(methodInvocationObject.getMethodInvocation().getExpression().toString())){
+											compositeVariable = true;
+											break;
+										}
+									}
+							}
+						}
+					}
+				}
+			}
+		}
+		return compositeVariable;
 	}
 }

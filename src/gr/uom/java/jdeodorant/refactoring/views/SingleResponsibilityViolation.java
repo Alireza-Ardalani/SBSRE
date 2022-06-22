@@ -830,6 +830,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 				Set<PlainVariable>  ObjectList = new LinkedHashSet<PlainVariable>();
 				ObjectList = pdg.getObjectInMethodInvovation();
 				
+				/*
 				for(PlainVariable o : ObjectList){
 					System.out.println("objectList "+ o);
 					
@@ -842,6 +843,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 					 System.out.println(Last.get(x).toString());
 					 
 				 }
+				 */
 					for(PlainVariable variable : ObjectList) {	
 						PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,1000,2);
 						
@@ -862,7 +864,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 								sumOfDuplicationRatioInGroup += duplicationRatio;
 								if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 									maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-									slice.SetType("LOL");
+									slice.SetType("Enhanced-Object Slicing");
 								sliceGroup.addCandidate(slice);	
 							}
 						}
@@ -877,9 +879,9 @@ public class SingleResponsibilityViolation extends ViewPart {
 				 
 				int andis=0;
 				for(PlainVariable variable : targetList) {	
-					Integer F =First.get(andis);
-					Integer L =Last.get(andis);
-					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,F,L,0);
+					Integer first =First.get(andis);
+					Integer last =Last.get(andis);
+					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,first,last,0);
 					andis++;
 					double sumOfExtractedStatementsInGroup = 0.0;
 					double sumOfDuplicatedStatementsInGroup = 0.0;
@@ -963,7 +965,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 							sumOfDuplicationRatioInGroup += duplicationRatio;
 							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-							slice.SetType("Complete Computation Slicing");
+							slice.SetType("Complete-Computation Slicing");
 							sliceGroup.addCandidate(slice);
 						}
 					}
@@ -995,7 +997,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 							sumOfDuplicationRatioInGroup += duplicationRatio;
 							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-							slice.SetType("Object State Slicing");
+							slice.SetType("Object-State Slicing");
 							sliceGroup.addCandidate(slice);
 						}
 					}

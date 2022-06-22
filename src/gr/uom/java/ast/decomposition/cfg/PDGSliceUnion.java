@@ -38,10 +38,6 @@ public class PDGSliceUnion {
 		this.Last=Last;
 		this.subgraph = new PDGSlice(pdg, boundaryBlock);
 		this.sliceNodes = new TreeSet<PDGNode>();
-		
-		//comment-alireza : localVariableCriterion this is the variable in code and all of them analys
-		//System.out.println(localVariableCriterion.toString()+"=>localVariableCriterion");
-		
 		for(PDGNode nodeCriterion : nodeCriteria) {
 			sliceNodes.addAll(subgraph.computeSlice(nodeCriterion));
 		}
@@ -553,17 +549,16 @@ public class PDGSliceUnion {
 		return false;
 	}
 	
-	private boolean alfa(){
+	//SBSRE: Add sliceSameAsOrginalMethod() Method =>
+	
+	private boolean sliceSameAsOrginalMethod(){
 		List<PlainVariable> targetList = new ArrayList<PlainVariable>();
 		targetList=pdg.variableOutput();
 		int size= targetList.size();
 		if(size==1){
 			for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {	
 				PlainVariable variable = new PlainVariable(declaration);
-				//System.out.println("><><><><<><><>><><><");
-				//System.out.println(variable.toString());
 				boolean temp=false;
-				
 				for(GraphNode node : sliceNodes) {
 					PDGNode pdgNode = (PDGNode)node;
 					if(pdgNode.definesLocalVariable(variable)){
@@ -572,30 +567,30 @@ public class PDGSliceUnion {
 					else if(pdgNode.usesLocalVariable(variable)){
 						temp=true;
 					}
-				}
-				
+				}			
 				if(!temp){
-					//System.err.println(variable.toString());
 					return false;
 				}
 
 			}
-			//System.err.println("MOSHKELeeeeeeee");
 			return true;
 		}
 		else{
 			return false;
 		}
 	}
+	
+	//SBSRE: add outputRule() Method => 
+	
 	public boolean outputRule(){
 		boolean temp=false;
 		for(GraphNode node : sliceNodes) {
 			PDGNode pdgNode = (PDGNode)node;
 			if(pdgNode.getId() > First && pdgNode.getId() <=Last){
-				
+				temp = false;
 			}
 			else{
-				temp=true;
+				temp = true;
 			}
 		}
 		return temp;
@@ -619,17 +614,17 @@ public class PDGSliceUnion {
 	
 	
 	public boolean satisfiesRulesSRP() {
-		if(sliceEqualsMethodBody() || alfa() || outputRule() ||
+		if(sliceEqualsMethodBody() || sliceSameAsOrginalMethod() || outputRule() ||
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
 				   sliceNodes.size() <= nodeCriteria.size() ||
 				   allNodeCriteriaAreDuplicated() ||
+				   nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||
 				   containsDuplicateNodeWithStateChangingMethodInvocation() ||
+				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
 				   duplicatedSliceNodeWithClassInstantiationHasDependenceOnRemovableNode() ||
-				   !complyWithUserThresholds() ||
+				   !complyWithUserThresholds() || sliceContainsReturnStatement() ||
 				   sliceContainsBranchStatementWithoutInnermostLoop())
 					return false;
 				return true;
 	}
-	
-//nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() hazf shode baraye moshkele adam daryaf slice ha
 }

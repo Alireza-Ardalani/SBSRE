@@ -36,7 +36,6 @@ public class PDGSlice extends Graph {
 		this.boundaryBlock = boundaryBlock;
 		Set<PDGNode> regionNodes = pdg.blockBasedRegion(boundaryBlock);
 			
-		//CommentAlireza: for loop add all or some code of variable&if&for&.....
 		for(PDGNode node : regionNodes) {
 			nodes.add(node);		
 		}

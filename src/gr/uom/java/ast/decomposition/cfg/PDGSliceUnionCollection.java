@@ -79,11 +79,8 @@ public class PDGSliceUnionCollection {
 				for(BasicBlock basicBlock : basicBlockIntersection) {
 					PDGSliceUnion sliceUnion = new PDGSliceUnion(pdg, basicBlock, nodeCriteria, localVariableCriterion,First,Last);
 					if(sliceUnion.satisfiesRulesSRP()){
-						//System.out.println("Slice-Satisfies-Rules");
 						sliceUnionMap.put(basicBlock, sliceUnion);
 					}
-					//System.out.println("!!!");
-					//System.out.println(sliceUnion.satisfiesRules1());
 				}
 			}
 			
