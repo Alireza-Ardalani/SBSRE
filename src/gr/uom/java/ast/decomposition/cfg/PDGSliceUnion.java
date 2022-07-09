@@ -583,23 +583,41 @@ public class PDGSliceUnion {
 	//SBSRE: add outputRule() Method => 
 	
 	public boolean outputRule(){
-		boolean temp=false;
+		boolean outOfRegion=false;
 		for(GraphNode node : sliceNodes) {
 			PDGNode pdgNode = (PDGNode)node;
 			if(pdgNode.getId() > First && pdgNode.getId() <=Last){
-				temp = false;
+				outOfRegion = false;
 			}
 			else{
-				temp = true;
+				outOfRegion = true;
 			}
 		}
-		return temp;
+		return outOfRegion;
 	}
 	
+	//SBSRE : add variableCriterionIsFainal
+	public boolean variableCriterionIsFainal(){
+		int counter = 0;
+			if(localVariableCriterion.isFainal()){
+				for(GraphNode node : pdg.nodes){
+					PDGNode pdgNode = (PDGNode)node;
+					if(pdgNode.definesLocalVariable(localVariableCriterion) && 
+							!pdgNode.declaresLocalVariable(localVariableCriterion)){
+						counter++;
+					}
+				}
+			}
+			if(counter > 1){
+				return true;
+			}
+		return false;
+	}
 
 	public boolean satisfiesRules() {
+		
 		if(sliceEqualsMethodBody() || sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
-				declarationOfVariableCriterionIsDuplicated() ||
+				declarationOfVariableCriterionIsDuplicated() || 
 				variableCriterionIsReturnedVariableInOriginalMethod() || (sliceNodes.size() <= nodeCriteria.size()) ||
 				allNodeCriteriaAreDuplicated() || returnStatementIsControlDependentOnSliceNode() || sliceContainsReturnStatement() ||
 				containsDuplicateNodeWithStateChangingMethodInvocation() ||
@@ -614,11 +632,12 @@ public class PDGSliceUnion {
 	
 	
 	public boolean satisfiesRulesSRP() {
-		if(sliceEqualsMethodBody() || sliceSameAsOrginalMethod() || outputRule() ||
+		if(sliceEqualsMethodBody() || sliceSameAsOrginalMethod() || outputRule() || 
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
 				   sliceNodes.size() <= nodeCriteria.size() ||
-				   allNodeCriteriaAreDuplicated() ||
+				   allNodeCriteriaAreDuplicated() || variableCriterionIsFainal() ||
 				   nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||
+				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
 				   containsDuplicateNodeWithStateChangingMethodInvocation() ||
 				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
 				   duplicatedSliceNodeWithClassInstantiationHasDependenceOnRemovableNode() ||
@@ -627,4 +646,5 @@ public class PDGSliceUnion {
 					return false;
 				return true;
 	}
+	 
 }

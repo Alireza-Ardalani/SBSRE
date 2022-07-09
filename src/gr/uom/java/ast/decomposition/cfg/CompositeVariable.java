@@ -19,11 +19,11 @@ public class CompositeVariable extends AbstractVariable {
 
 	public CompositeVariable(AbstractVariable argument, AbstractVariable rightPart) {
 		this(argument.getVariableBindingKey(), argument.getVariableName(),
-				argument.getVariableType(), argument.isField(), argument.isParameter(), argument.isStatic(), rightPart);
+				argument.getVariableType(), argument.isField(), argument.isParameter(), argument.isStatic(),argument.isFainal(), rightPart);
 	}
 
-	private CompositeVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic, AbstractVariable rightPart) {
-		super(variableBindingKey, variableName, variableType, isField, isParameter, isStatic);
+	private CompositeVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic,boolean isFainal, AbstractVariable rightPart) {
+		super(variableBindingKey, variableName, variableType, isField, isParameter, isStatic,isFainal);
 		this.rightPart = rightPart;
 	}
 
@@ -35,11 +35,11 @@ public class CompositeVariable extends AbstractVariable {
 	//if composite variable is "one.two.three" then left part is "one.two"
 	public AbstractVariable getLeftPart() {
 		if(rightPart instanceof PlainVariable) {
-			return new PlainVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic);
+			return new PlainVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic,isFainal);
 		}
 		else {
 			CompositeVariable compositeVariable = (CompositeVariable)rightPart;
-			return new CompositeVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic, compositeVariable.getLeftPart());
+			return new CompositeVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic,isFainal, compositeVariable.getLeftPart());
 		}
 	}
 
@@ -55,7 +55,7 @@ public class CompositeVariable extends AbstractVariable {
 
 	//if composite variable is "one.two.three" then initial variable is "one"
 	public PlainVariable getInitialVariable() {
-		return new PlainVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic);
+		return new PlainVariable(variableBindingKey, variableName, variableType, isField, isParameter, isStatic,isFainal);
 	}
 
 	public boolean containsPlainVariable(PlainVariable variable) {

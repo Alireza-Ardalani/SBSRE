@@ -14,8 +14,8 @@ public class PlainVariable extends AbstractVariable {
 		super(variableBinding);
 	}
 
-	public PlainVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic) {
-		super(variableBindingKey, variableName, variableType, isField, isParameter, isStatic);
+	public PlainVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic, boolean isFainal) {
+		super(variableBindingKey, variableName, variableType, isField, isParameter, isStatic,isFainal);
 	}
 
 	public boolean containsPlainVariable(PlainVariable variable) {

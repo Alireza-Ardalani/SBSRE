@@ -2328,7 +2328,7 @@ public class ExtractClassRefactoring extends Refactoring {
 	}
 
 	private void addThisVariable(Set<PlainVariable> additionalArgumentsAddedToMovedMethod) {
-		PlainVariable variable = new PlainVariable("this", "this", "this", false, false, false);
+		PlainVariable variable = new PlainVariable("this", "this", "this", false, false, false,false);
 		additionalArgumentsAddedToMovedMethod.add(variable);
 	}
 

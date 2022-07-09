@@ -12,6 +12,8 @@ public abstract class AbstractVariable {
 	protected boolean isField;
 	protected boolean isParameter;
 	protected boolean isStatic;
+	//SBSRE => add new
+	protected boolean isFainal;
 	
 	public AbstractVariable(VariableDeclaration name) {
 		IVariableBinding variableBinding = name.resolveBinding();
@@ -21,20 +23,23 @@ public abstract class AbstractVariable {
 		this.isField = variableBinding.isField();
 		this.isParameter = variableBinding.isParameter();
 		this.isStatic = (variableBinding.getModifiers() & Modifier.STATIC) != 0;
+		this.isFainal = (variableBinding.getModifiers() & Modifier.FINAL)  != 0;
+
 	}
 
 	public AbstractVariable(IVariableBinding variableBinding) {
 		this(variableBinding.getKey(), variableBinding.getName(), variableBinding.getType().getQualifiedName(),
-				variableBinding.isField(), variableBinding.isParameter(), (variableBinding.getModifiers() & Modifier.STATIC) != 0);
+				variableBinding.isField(), variableBinding.isParameter(), (variableBinding.getModifiers() & Modifier.STATIC) != 0, (variableBinding.getModifiers() & Modifier.FINAL)  != 0);
 	}
 
-	public AbstractVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic) {
+	public AbstractVariable(String variableBindingKey, String variableName, String variableType, boolean isField, boolean isParameter, boolean isStatic, boolean isFainal) {
 		this.variableBindingKey = variableBindingKey;
 		this.variableName = variableName;
 		this.variableType = variableType;
 		this.isField = isField;
 		this.isParameter = isParameter;
 		this.isStatic = isStatic;
+		this.isFainal =isFainal;
 	}
 
 	public String getVariableBindingKey() {
@@ -59,6 +64,9 @@ public abstract class AbstractVariable {
 
 	public boolean isStatic() {
 		return isStatic;
+	}
+	public boolean isFainal(){
+		return isFainal;
 	}
 
 	public abstract boolean containsPlainVariable(PlainVariable variable);

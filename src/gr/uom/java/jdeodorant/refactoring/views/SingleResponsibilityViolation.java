@@ -718,7 +718,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 							Display.getDefault().asyncExec(new Runnable() {
 								public void run() {
 									MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MESSAGE_DIALOG_TITLE,
-											"Compilation errors were detected in the project. Fix the errors before using JDeodorant.");
+											"Compilation errors were detected in the project. Fix the errors before using SBSRE.");
 								}
 							});
 						}
@@ -801,7 +801,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 			e.printStackTrace();
 		} catch (CompilationErrorDetectedException e) {
 			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MESSAGE_DIALOG_TITLE,
-					"Compilation errors were detected in the project. Fix the errors before using JDeodorant.");
+					"Compilation errors were detected in the project. Fix the errors before using SBSRE.");
 		}
 		return table;
 	}
@@ -818,66 +818,16 @@ public class SingleResponsibilityViolation extends ViewPart {
 				CFG cfg = new CFG(methodObject);
 				PDG pdg = new PDG(cfg, classObject.getIFile(), classObject.getFieldsAccessedInsideMethod(methodObject), null);
 				
-				////////////////////////////////////////////////////////////////////////////////////////////////
-
-				List<PlainVariable> targetList = new ArrayList<PlainVariable>();
-				targetList=pdg.variableOutput();
-				List<Integer> First = new ArrayList<Integer>();
-				First=pdg.FirstPDGNode();
-				List<Integer> Last = new ArrayList<Integer>();
-				Last=pdg.LastPDGNode();
-				
 				Set<PlainVariable>  ObjectList = new LinkedHashSet<PlainVariable>();
+				List<PlainVariable> targetList = new ArrayList<PlainVariable>();
+				List<Integer> First = new ArrayList<Integer>();
+				List<Integer> Last = new ArrayList<Integer>();
 				ObjectList = pdg.getObjectInMethodInvovation();
-				
-				/*
-				for(PlainVariable o : ObjectList){
-					System.out.println("objectList "+ o);
-					
-				}
-
-				 
-				 for(int x=0;x<Last.size();x++){
-					 System.out.println(targetList.get(x).toString());
-					 System.out.println(First.get(x).toString());
-					 System.out.println(Last.get(x).toString());
-					 
-				 }
-				 */
-					for(PlainVariable variable : ObjectList) {	
-						PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,1000,2);
-						
-						double sumOfExtractedStatementsInGroup = 0.0;
-						double sumOfDuplicatedStatementsInGroup = 0.0;
-						double sumOfDuplicationRatioInGroup = 0.0;
-						int maximumNumberOfExtractedStatementsInGroup = 0;
-						int groupSize = sliceUnionCollection.getSliceUnions().size();
-						ASTSliceGroup sliceGroup = new ASTSliceGroup();
-						for(PDGSliceUnion sliceUnion : sliceUnionCollection.getSliceUnions()) {
-							ASTSlice slice = new ASTSlice(sliceUnion);
-							if(!slice.isVariableCriterionDeclarationStatementIsDeeperNestedThanExtractedMethodInvocationInsertionStatement()) {
-								int numberOfExtractedStatements = slice.getNumberOfSliceStatements();
-								int numberOfDuplicatedStatements = slice.getNumberOfDuplicatedStatements();
-								double duplicationRatio = (double)numberOfDuplicatedStatements/(double)numberOfExtractedStatements;
-								sumOfExtractedStatementsInGroup += numberOfExtractedStatements;
-								sumOfDuplicatedStatementsInGroup += numberOfDuplicatedStatements;
-								sumOfDuplicationRatioInGroup += duplicationRatio;
-								if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
-									maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-									slice.SetType("Enhanced-Object Slicing");
-								sliceGroup.addCandidate(slice);	
-							}
-						}
-						if(!sliceGroup.getCandidates().isEmpty()) {
-							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
-							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
-							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
-							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
-							extractedSliceGroups.add(sliceGroup);
-						}
-					}
-				 
+				targetList=pdg.variableOutput();
+				First=pdg.FirstPDGNode();
+				Last=pdg.LastPDGNode();				 
 				int andis=0;
+				
 				for(PlainVariable variable : targetList) {	
 					Integer first =First.get(andis);
 					Integer last =Last.get(andis);
@@ -901,17 +851,16 @@ public class SingleResponsibilityViolation extends ViewPart {
 							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
 								slice.SetType("Output-Based Slicing");
-							sliceGroup.addCandidate(slice);	
+								sliceGroup.addCandidate(slice);
 						}
 					}
-					
-					//sliceGroup.addCandidate();
 					if(!sliceGroup.getCandidates().isEmpty()) {
 						sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
 						sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
 						sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
 						sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
 						extractedSliceGroups.add(sliceGroup);
+						
 					}
 				}
 				for(PlainVariable variable : targetList) {
@@ -945,6 +894,48 @@ public class SingleResponsibilityViolation extends ViewPart {
 						extractedSliceGroups.add(sliceGroup);
 					}
 				}
+				for(PlainVariable variable : ObjectList) {	
+					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,1000,2);
+					double sumOfExtractedStatementsInGroup = 0.0;
+					double sumOfDuplicatedStatementsInGroup = 0.0;
+					double sumOfDuplicationRatioInGroup = 0.0;
+					int maximumNumberOfExtractedStatementsInGroup = 0;
+					int groupSize = sliceUnionCollection.getSliceUnions().size();
+					ASTSliceGroup sliceGroup = new ASTSliceGroup();
+					for(PDGSliceUnion sliceUnion : sliceUnionCollection.getSliceUnions()) {
+						ASTSlice slice = new ASTSlice(sliceUnion);
+						if(!slice.isVariableCriterionDeclarationStatementIsDeeperNestedThanExtractedMethodInvocationInsertionStatement()) {
+							int numberOfExtractedStatements = slice.getNumberOfSliceStatements();
+							int numberOfDuplicatedStatements = slice.getNumberOfDuplicatedStatements();
+							double duplicationRatio = (double)numberOfDuplicatedStatements/(double)numberOfExtractedStatements;
+							sumOfExtractedStatementsInGroup += numberOfExtractedStatements;
+							sumOfDuplicatedStatementsInGroup += numberOfDuplicatedStatements;
+							sumOfDuplicationRatioInGroup += duplicationRatio;
+							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
+								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
+								slice.SetType("Enhanced-Object Slicing");
+								sliceGroup.addCandidate(slice);	
+						}
+					}
+					if(!sliceGroup.getCandidates().isEmpty()) {
+						int  extractedSliceGroupsSize= extractedSliceGroups.size();
+						boolean check = false;
+						for(int candidateGroupNumber = 0 ; candidateGroupNumber < extractedSliceGroupsSize ; candidateGroupNumber++){
+							ASTSliceGroup candidateGroup = extractedSliceGroups.get(candidateGroupNumber);	
+							if(candidateGroup.getCandidates().toString().equals(sliceGroup.getCandidates().toString())){
+								check =true;
+								break;
+							}
+						}
+						if(!check){
+							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
+							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
+							extractedSliceGroups.add(sliceGroup);
+						}
+					}
+				}
 				for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {
 					PlainVariable variable = new PlainVariable(declaration);
 					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,0,1);
@@ -965,16 +956,27 @@ public class SingleResponsibilityViolation extends ViewPart {
 							sumOfDuplicationRatioInGroup += duplicationRatio;
 							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-							slice.SetType("Complete-Computation Slicing");
-							sliceGroup.addCandidate(slice);
+								slice.SetType("Complete-Computation Slicing");
+								sliceGroup.addCandidate(slice);
 						}
 					}
 					if(!sliceGroup.getCandidates().isEmpty()) {
-						sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
-						sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
-						sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
-						sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
-						extractedSliceGroups.add(sliceGroup);
+						int  extractedSliceGroupsSize= extractedSliceGroups.size();
+						boolean check = false;
+						for(int candidateGroupNumber = 0 ; candidateGroupNumber < extractedSliceGroupsSize ; candidateGroupNumber++){
+							ASTSliceGroup candidateGroup = extractedSliceGroups.get(candidateGroupNumber);	
+							if(candidateGroup.getCandidates().toString().equals(sliceGroup.getCandidates().toString())){
+								check =true;
+								break;
+							}
+						}
+						if(!check){
+							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
+							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
+							extractedSliceGroups.add(sliceGroup);
+						}
 					}
 				}
 				for(VariableDeclaration declaration : pdg.getVariableDeclarationsAndAccessedFieldsInMethod()) {
@@ -997,16 +999,28 @@ public class SingleResponsibilityViolation extends ViewPart {
 							sumOfDuplicationRatioInGroup += duplicationRatio;
 							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
 								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
-							slice.SetType("Object-State Slicing");
-							sliceGroup.addCandidate(slice);
+								slice.SetType("Object-State Slicing");
+								sliceGroup.addCandidate(slice);
+							
 						}
 					}
 					if(!sliceGroup.getCandidates().isEmpty()) {
-						sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
-						sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
-						sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
-						sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
-						extractedSliceGroups.add(sliceGroup);
+						int  extractedSliceGroupsSize= extractedSliceGroups.size();
+						boolean check = false;
+						for(int candidateGroupNumber = 0 ; candidateGroupNumber < extractedSliceGroupsSize ; candidateGroupNumber++){
+							ASTSliceGroup candidateGroup = extractedSliceGroups.get(candidateGroupNumber);							
+							if(candidateGroup.getCandidates().toString().equals(sliceGroup.getCandidates().toString())){
+								check =true;
+								break;
+							}
+						}
+						if(!check){
+							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
+							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
+							extractedSliceGroups.add(sliceGroup);
+						}
 					}
 				}
 				
@@ -1014,6 +1028,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 			}
 		}
 	}
+
 
 	private void saveResults() {
 		FileDialog fd = new FileDialog(getSite().getWorkbenchWindow().getShell(), SWT.SAVE);
