@@ -511,45 +511,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 		saveResultsAction.setToolTipText("Save Results");
 		saveResultsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
-		saveResultsAction.setEnabled(false);
-		
-		/*evolutionAnalysisAction = new Action() {
-			public void run() {
-				methodEvolution = null;
-				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
-				if(selection.getFirstElement() instanceof ASTSlice) {
-					final ASTSlice slice = (ASTSlice)selection.getFirstElement();
-					try {
-						IWorkbench wb = PlatformUI.getWorkbench();
-						IProgressService ps = wb.getProgressService();
-						ps.busyCursorWhile(new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								ProjectEvolution projectEvolution = new ProjectEvolution(selectedProject);
-								if(projectEvolution.getProjectEntries().size() > 1) {
-									methodEvolution = new MethodEvolution(projectEvolution, (IMethod)slice.getSourceMethodDeclaration().resolveBinding().getJavaElement(), monitor);
-								}
-							}
-						});
-						if(methodEvolution != null) {
-							EvolutionDialog dialog = new EvolutionDialog(getSite().getWorkbenchWindow(), methodEvolution, "Method Evolution", false);
-							dialog.open();
-						}
-						else
-							MessageDialog.openInformation(getSite().getShell(), "Method Evolution",
-							"Method evolution analysis cannot be performed, since only a single version of the examined project is loaded in the workspace.");
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		evolutionAnalysisAction.setToolTipText("Evolution Analysis");
-		evolutionAnalysisAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
-		evolutionAnalysisAction.setEnabled(false);*/
-		
+		saveResultsAction.setEnabled(false);		
 		applyRefactoringAction = new Action() {
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();

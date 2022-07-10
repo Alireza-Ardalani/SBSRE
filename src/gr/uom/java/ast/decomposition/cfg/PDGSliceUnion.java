@@ -1,10 +1,12 @@
 package gr.uom.java.ast.decomposition.cfg;
 
 import gr.uom.java.ast.AbstractMethodDeclaration;
+import gr.uom.java.ast.VariableDeclarationObject;
 import gr.uom.java.jdeodorant.preferences.PreferenceConstants;
 import gr.uom.java.jdeodorant.refactoring.Activator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -613,9 +619,96 @@ public class PDGSliceUnion {
 			}
 		return false;
 	}
+	
+	public List<AbstractVariable> getVariablesInSlice(){
+		List<AbstractVariable> usedAndDefVariableInSlice = new ArrayList<AbstractVariable>();
+		for(GraphNode node : sliceNodes){
+			PDGNode pdgNode = (PDGNode)node;
+			Iterator<AbstractVariable> usedVariableIterator = pdgNode.getUsedVariableIterator();
+			while(usedVariableIterator.hasNext()){
+				AbstractVariable variable = usedVariableIterator.next();
+				if(usedAndDefVariableInSlice.isEmpty()){
+					usedAndDefVariableInSlice.add(variable);
+				}
+				else{
+					boolean existVariable = false;
+					for(AbstractVariable variableInList : usedAndDefVariableInSlice ){
+						if(variableInList.equals(variable)){
+							existVariable = true;
+							break;
+						}
+					}
+					if(!existVariable){
+						usedAndDefVariableInSlice.add(variable);
+					}
+				}
+			}
+			Iterator<AbstractVariable> defVariableIterator = pdgNode.getDefinedVariableIterator();
+			
+			while(defVariableIterator.hasNext()){
+				AbstractVariable variable = defVariableIterator.next();
+				if(usedAndDefVariableInSlice.isEmpty()){
+					usedAndDefVariableInSlice.add(variable);
+				}
+				else{
+					boolean existVariable = false;
+					for(AbstractVariable variableInList : usedAndDefVariableInSlice ){
+						if(variableInList.equals(variable)){
+							existVariable = true;
+							break;
+						}
+					}
+					if(!existVariable){
+						usedAndDefVariableInSlice.add(variable);
+					}
+				}
+			}
+			
+		}
+		return usedAndDefVariableInSlice;
+	}
+	
+	public boolean notInitializedParameter(){
+		List<AbstractVariable> VariablesInSlice = new ArrayList<AbstractVariable>();
+		List<AbstractVariable> notInitializeVariables = new ArrayList<AbstractVariable>();
+		VariablesInSlice = getVariablesInSlice();
+		for(AbstractVariable variable : VariablesInSlice){
+			if(!variable.isParameter()){
+				if(!declaredVariableInSlice(variable)){
+					notInitializeVariables.add(variable);
+				}
+			}
+		}
+		if(notInitializeVariables.isEmpty()){
+			return false;
+		}
+		else{
+			for(AbstractVariable variable : notInitializeVariables){
+				for(GraphNode node : pdg.nodes){
+					PDGNode pdgNode = (PDGNode)node;
+					if(pdgNode.declaresLocalVariable(variable)){
+						if(pdgNode.getStatement().getLiterals().isEmpty()){
+							return true;
+						}						
+					}
+				}
+				
+			}		
+		}
+		return false;
+	}
+	public boolean declaredVariableInSlice(AbstractVariable variable) {
+		for(GraphNode node : sliceNodes){
+			PDGNode pdgNode = (PDGNode)node;
+			if(pdgNode.declaresLocalVariable(variable)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
 	public boolean satisfiesRules() {
-		
 		if(sliceEqualsMethodBody() || sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
 				declarationOfVariableCriterionIsDuplicated() || 
 				variableCriterionIsReturnedVariableInOriginalMethod() || (sliceNodes.size() <= nodeCriteria.size()) ||
@@ -632,14 +725,13 @@ public class PDGSliceUnion {
 	
 	
 	public boolean satisfiesRulesSRP() {
-		if(sliceEqualsMethodBody() || sliceSameAsOrginalMethod() || outputRule() || 
-				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
-				   sliceNodes.size() <= nodeCriteria.size() ||
-				   allNodeCriteriaAreDuplicated() || variableCriterionIsFainal() ||
+		if( sliceSameAsOrginalMethod() || notInitializedParameter() || outputRule() || variableCriterionIsFainal() ||
+				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
+				   sliceNodes.size() <= nodeCriteria.size() || notInitializedParameter() ||
+				   allNodeCriteriaAreDuplicated() ||
 				   nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||
 				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
 				   containsDuplicateNodeWithStateChangingMethodInvocation() ||
-				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
 				   duplicatedSliceNodeWithClassInstantiationHasDependenceOnRemovableNode() ||
 				   !complyWithUserThresholds() || sliceContainsReturnStatement() ||
 				   sliceContainsBranchStatementWithoutInnermostLoop())
