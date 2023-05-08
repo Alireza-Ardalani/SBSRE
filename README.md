@@ -8,7 +8,7 @@ Existing extract method refactoring tools do not pay serious attention to these 
 
 
 ## Relevant publications
-To be announced.
+Preprint:Supporting single responsibility through automated extract method refactoring (https://arxiv.org/abs/2305.03428)
 
 
 
