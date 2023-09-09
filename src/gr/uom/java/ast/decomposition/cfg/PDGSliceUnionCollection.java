@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class PDGSliceUnionCollection {
 	private Map<BasicBlock, PDGSliceUnion> sliceUnionMap;
@@ -78,12 +79,47 @@ public class PDGSliceUnionCollection {
 				}
 				for(BasicBlock basicBlock : basicBlockIntersection) {
 					PDGSliceUnion sliceUnion = new PDGSliceUnion(pdg, basicBlock, nodeCriteria, localVariableCriterion,First,Last);
+					
+					//Checking Scope of the output after backward slicing. 
+					//We know all the criterion are correct, so checking the Union of the bakward slices is neccesary 
+					Set<PDGNode> sliceNodes = sliceUnion.getSliceNodes();
+					Set<PDGNode> sliceNodesMustRemoved = new TreeSet<PDGNode>();
+					for(PDGNode node: sliceNodes){
+						if(node.getId() < First ){
+							sliceNodesMustRemoved.add(node);	
+						}
+					}
+					sliceUnion.refiningSliceNodes(sliceNodesMustRemoved);
+					
 					if(sliceUnion.satisfiesRulesSRP()){
 						sliceUnionMap.put(basicBlock, sliceUnion);
+						
 					}
 				}
 			}
 			
+		}
+		else if(Mode==4){
+			this.sliceUnionMap = new LinkedHashMap<BasicBlock, PDGSliceUnion>();
+			Set<PDGNode> nodeCriteria = pdg.getAssignmentNodesOfVariableCriterionGlobal(localVariableCriterion);
+			Map<PDGNode, Set<BasicBlock>> boundaryBlockMap = new LinkedHashMap<PDGNode, Set<BasicBlock>>();
+			for(PDGNode nodeCriterion : nodeCriteria) {
+				Set<BasicBlock> boundaryBlocks = pdg.boundaryBlocks(nodeCriterion);
+				boundaryBlockMap.put(nodeCriterion, boundaryBlocks);
+			}
+			List<Set<BasicBlock>> list = new ArrayList<Set<BasicBlock>>(boundaryBlockMap.values());
+			if(!list.isEmpty()) {
+				Set<BasicBlock> basicBlockIntersection = new LinkedHashSet<BasicBlock>(list.get(0));
+				for(int i=1; i<list.size(); i++) {
+					basicBlockIntersection.retainAll(list.get(i));
+				}
+				for(BasicBlock basicBlock : basicBlockIntersection) {
+					PDGSliceUnion sliceUnion = new PDGSliceUnion(pdg, basicBlock, nodeCriteria, localVariableCriterion,First,Last);
+					if(sliceUnion.satisfiesRulesZZZZ()){
+						sliceUnionMap.put(basicBlock, sliceUnion);
+					}
+				}
+			}
 		}
 	}
 

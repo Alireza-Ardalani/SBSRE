@@ -306,12 +306,6 @@ public class PDGNode extends GraphNode implements Comparable<PDGNode> {
 	protected void processArgumentsOfInternalMethodInvocation(MethodInvocationObject methodInvocationObject, AbstractVariable variable) {
 		SystemObject systemObject = ASTReader.getSystemObject();
 		MethodInvocation methodInvocation = methodInvocationObject.getMethodInvocation();
-		//System.err.println(methodInvocation.getName().toString());
-		//System.err.println(methodInvocation.getExpression().toString());
-		//System.err.println(methodInvocation.getStartPosition());
-		//System.err.println(methodInvocationObject.getParameterList().toString());
-		//System.out.println(methodInvocation.getName().toString());
-		//System.out.println(methodInvocation.arguments().toString());
 		
 		MethodInvocationStartPosition.add(methodInvocation.getStartPosition()); //New-SBSRE
 		

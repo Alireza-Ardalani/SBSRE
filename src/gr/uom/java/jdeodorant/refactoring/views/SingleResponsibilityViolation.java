@@ -765,6 +765,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MESSAGE_DIALOG_TITLE,
 					"Compilation errors were detected in the project. Fix the errors before using SBSRE.");
 		}
+		
 		return table;
 	}
 
@@ -790,6 +791,20 @@ public class SingleResponsibilityViolation extends ViewPart {
 				Last=pdg.LastPDGNode();				 
 				int andis=0;
 				
+				if(targetList.size()>1){
+					System.out.println(">>>> OutPuts are More than 1.");
+				}
+				
+//				for(VariableDeclaration x:pdg.getFieldsAccessedInMethod()){
+//					//System.out.println(">> "+x);
+//					PlainVariable variable = new PlainVariable(x);
+//					System.out.println(">> "+variable + ">>" + variable.getVariableType());
+//					if(variable.getVariableType().contains("[]")){
+//						System.out.print("BAAAAAA");
+//					}
+//
+//				}
+
 				for(PlainVariable variable : targetList) {	
 					Integer first =First.get(andis);
 					Integer last =Last.get(andis);
@@ -898,6 +913,50 @@ public class SingleResponsibilityViolation extends ViewPart {
 						}
 					}
 				}
+		
+				for(VariableDeclaration declaration : pdg.getFieldsAccessedInMethod()) {
+					PlainVariable variable = new PlainVariable(declaration);
+					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,0,4);
+					double sumOfExtractedStatementsInGroup = 0.0;
+					double sumOfDuplicatedStatementsInGroup = 0.0;
+					double sumOfDuplicationRatioInGroup = 0.0;
+					int maximumNumberOfExtractedStatementsInGroup = 0;
+					int groupSize = sliceUnionCollection.getSliceUnions().size();
+					ASTSliceGroup sliceGroup = new ASTSliceGroup();
+					for(PDGSliceUnion sliceUnion : sliceUnionCollection.getSliceUnions()) {
+						ASTSlice slice = new ASTSlice(sliceUnion);
+						if(!slice.isVariableCriterionDeclarationStatementIsDeeperNestedThanExtractedMethodInvocationInsertionStatement()) {
+							int numberOfExtractedStatements = slice.getNumberOfSliceStatements();
+							int numberOfDuplicatedStatements = slice.getNumberOfDuplicatedStatements();
+							double duplicationRatio = (double)numberOfDuplicatedStatements/(double)numberOfExtractedStatements;
+							sumOfExtractedStatementsInGroup += numberOfExtractedStatements;
+							sumOfDuplicatedStatementsInGroup += numberOfDuplicatedStatements;
+							sumOfDuplicationRatioInGroup += duplicationRatio;
+							if(numberOfExtractedStatements > maximumNumberOfExtractedStatementsInGroup)
+								maximumNumberOfExtractedStatementsInGroup = numberOfExtractedStatements;
+								slice.SetType("ZZZZ");
+								sliceGroup.addCandidate(slice);
+						}
+					}
+					if(!sliceGroup.getCandidates().isEmpty()) {
+						int  extractedSliceGroupsSize= extractedSliceGroups.size();
+						boolean check = false;
+						for(int candidateGroupNumber = 0 ; candidateGroupNumber < extractedSliceGroupsSize ; candidateGroupNumber++){
+							ASTSliceGroup candidateGroup = extractedSliceGroups.get(candidateGroupNumber);	
+							if(candidateGroup.getCandidates().toString().equals(sliceGroup.getCandidates().toString())){
+								check =true;
+								break;
+							}
+						}
+						if(!check){
+							sliceGroup.setAverageNumberOfExtractedStatementsInGroup(sumOfExtractedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageNumberOfDuplicatedStatementsInGroup(sumOfDuplicatedStatementsInGroup/(double)groupSize);
+							sliceGroup.setAverageDuplicationRatioInGroup(sumOfDuplicationRatioInGroup/(double)groupSize);
+							sliceGroup.setMaximumNumberOfExtractedStatementsInGroup(maximumNumberOfExtractedStatementsInGroup);
+							extractedSliceGroups.add(sliceGroup);
+						}
+					}
+				}
 				for(VariableDeclaration declaration : pdg.getVariableDeclarationsInMethod()) {
 					PlainVariable variable = new PlainVariable(declaration);
 					PDGSliceUnionCollection sliceUnionCollection = new PDGSliceUnionCollection(pdg, variable,0,0,1);
@@ -984,6 +1043,7 @@ public class SingleResponsibilityViolation extends ViewPart {
 							extractedSliceGroups.add(sliceGroup);
 						}
 					}
+					
 				}
 				
 				CompilationUnitCache.getInstance().releaseLock();
@@ -1010,14 +1070,70 @@ public class SingleResponsibilityViolation extends ViewPart {
         				out.write(columns[i].getText() + "\t");
         		}
         		out.newLine();*/
+        		int objectCounterBIG=0, completeCounterBIG=0, EnhancedCounterBIG=0, outputCounterBIG=0;
+        		int objectCounter=0, completeCounter=0, EnhancedCounter=0, outputCounter=0;
         		for(int i=0; i<tree.getItemCount(); i++) {
 					TreeItem treeItem = tree.getItem(i);
 					ASTSliceGroup group = (ASTSliceGroup)treeItem.getData();
+					int x = -1;
 					for(ASTSlice candidate : group.getCandidates()) {
+						
+						if(candidate.getType().equals("Object-State Slicing")){
+							objectCounter++;
+							x=0;
+						}
+						else if(candidate.getType().equals("Complete-Computation Slicing")){
+							completeCounter++;
+							x=1;
+						}
+						else if(candidate.getType().equals("Enhanced-Object Slicing")){
+							EnhancedCounter++;
+							x=2;
+						}
+						else if(candidate.getType().equals("Output-Based Slicing")){
+							outputCounter++;
+							x=3;
+						}
+						else{
+							
+						}
 						out.write(candidate.toString());
 						out.newLine();
 					}
+					if(x==0){
+						objectCounterBIG++;
+					}
+					else if(x==1){
+						completeCounterBIG++;
+					}
+					else if(x==2){
+						EnhancedCounterBIG++;
+					}
+					else if(x==3){
+						outputCounterBIG++;
+					}
 				}
+        		/*
+        		out.write("ObjectSlices: " + objectCounter);
+        		out.newLine();
+        		out.write("CompleteSlices: " + completeCounter);
+        		out.newLine();
+        		out.write("EncancedSlices: " + EnhancedCounter);
+        		out.newLine();
+        		out.write("OutPutSlices: " + outputCounter);
+        		out.newLine();
+        		*/
+
+        		System.out.println("ObjectSlices: " + objectCounter);
+        		System.out.println("CompleteSlices: " + completeCounter);
+        		System.out.println("EncancedSlices: " + EnhancedCounter);
+        		System.out.println("OutPutSlices: " + outputCounter);
+        		
+        		System.out.println("ObjectSlicesBIG: " + objectCounterBIG);
+        		System.out.println("CompleteSlicesBIG: " + completeCounterBIG);
+        		System.out.println("EncancedSlicesBIG: " + EnhancedCounterBIG);
+        		System.out.println("OutPutSlicesBIG: " + outputCounterBIG);
+        		
         		out.close();
         	} catch (IOException e) {
         		e.printStackTrace();

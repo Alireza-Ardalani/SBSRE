@@ -516,10 +516,35 @@ public class PDG extends Graph {
 						!pdgNode.declaresLocalVariable(localVariableCriterion)){
 					nodeCriteria.add(pdgNode);
 				}
-				
 			}
 			return nodeCriteria;
 		}
+		
+		public Set<PDGNode> getAssignmentNodesOfVariableCriterionGlobal(AbstractVariable localVariableCriterion) {	
+				Set<PDGNode> nodeCriteria = new LinkedHashSet<PDGNode>();
+				if(localVariableCriterion.getVariableType().contains("[]")){
+					for(GraphNode node : nodes) {
+						PDGNode pdgNode = (PDGNode)node;
+						if(pdgNode.usesLocalVariable(localVariableCriterion) && isUsedExperssion(pdgNode,localVariableCriterion)){
+							nodeCriteria.add(pdgNode);
+						}
+					}
+					
+				}
+				else{
+					for(GraphNode node : nodes) {
+						PDGNode pdgNode = (PDGNode)node;
+						if(pdgNode.definesLocalVariable(localVariableCriterion) &&
+								!pdgNode.declaresLocalVariable(localVariableCriterion)){
+							nodeCriteria.add(pdgNode);
+						}
+					}
+					
+				}
+			return nodeCriteria;
+		}
+
+
 
 	
 	public Set<PDGNode> getAssignmentNodesOfVariableCriterionIncludingDeclaration(AbstractVariable localVariableCriterion) {
@@ -1095,6 +1120,21 @@ public class PDG extends Graph {
 				boundaryBlocks.add(block);
 		}
 		return boundaryBlocks;
+	}
+	
+	private boolean isUsedExperssion(PDGNode pdgNode, AbstractVariable localVariableCriterion){
+		 Statement statement = pdgNode.getASTStatement();
+		 boolean matchFound = false;
+		 if(statement instanceof ExpressionStatement){
+			 ExpressionStatement expressionStatement = (ExpressionStatement)statement;
+			 Expression expression = expressionStatement.getExpression();
+				if(expression instanceof Assignment){
+					Pattern pattern = Pattern.compile(".*"+localVariableCriterion.toString()+".*"+"="+".*", Pattern.CASE_INSENSITIVE);
+				    Matcher matcher = pattern.matcher(pdgNode.toString());
+				    matchFound = matcher.find();					
+				}
+		 }
+		return matchFound;	
 	}
 
 	public Set<PDGNode> blockBasedRegion(BasicBlock block) {

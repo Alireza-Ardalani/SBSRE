@@ -250,6 +250,13 @@ public class PDGSliceUnion {
 	public Set<PDGNode> getSliceNodes() {
 		return this.sliceNodes;
 	}
+	public void refiningSliceNodes(Set<PDGNode> inputSet) {
+		
+		for(PDGNode node: inputSet){
+			this.sliceNodes.remove(node);
+		}
+	}
+	
 
 	public Set<AbstractVariable> getPassedParameters() {
 		return passedParameters;
@@ -727,7 +734,7 @@ public class PDGSliceUnion {
 	public boolean satisfiesRulesSRP() {
 		if( sliceSameAsOrginalMethod() || notInitializedParameter() || outputRule() || variableCriterionIsFainal() ||
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
-				   sliceNodes.size() <= nodeCriteria.size() || notInitializedParameter() ||
+				   sliceNodes.size() <= nodeCriteria.size() ||
 				   allNodeCriteriaAreDuplicated() ||
 				   nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||
 				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
@@ -738,5 +745,21 @@ public class PDGSliceUnion {
 					return false;
 				return true;
 	}
+	public boolean satisfiesRulesZZZZ() {
+		//Niaz be eslah darad
+		if( sliceSameAsOrginalMethod() || variableCriterionIsFainal() ||
+				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
+				   sliceNodes.size() <= nodeCriteria.size() ||
+				   allNodeCriteriaAreDuplicated() ||
+				   nonDuplicatedSliceNodeAntiDependsOnNonRemovableNode() ||
+				   nonDuplicatedSliceNodeOutputDependsOnNonRemovableNode() ||
+				   !complyWithUserThresholds() || sliceContainsReturnStatement() ||
+				   sliceContainsBranchStatementWithoutInnermostLoop())
+					return false;
+				return true;
+	}
+	
+	
+	
 	 
 }
