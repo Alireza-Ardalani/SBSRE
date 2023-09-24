@@ -8,7 +8,7 @@ This section offers motivational examples to illustrate the significance of focu
 JVLT project (https://jvlt.sourceforge.io/)
 
 ### Extract method provided by SBSRE tool 
-lines 21 to 29
+lines (21 to 29)
 
 ### Description
 
@@ -23,4 +23,18 @@ Focusing on the output instructions, the idea of the SBSRE tool, the calculation
 <p align = "center"> Example 1 </p>
 
 
-## Example 1
+## Example 2
+
+### Source code
+JVLT project (https://jvlt.sourceforge.io/)
+
+### Extract method provided by SBSRE tool 
+lines (223 to 236) 
+
+
+### Description
+
+We can consider two output variables for this method, or somehow, there are two ways to output data/values from it. Two class fields, or variables defined outside the method," _file_field" and "_panel." Each of them is a way for output. The interesting point is that if each of these two parts is executed, the other part is not executed. It seems that they are different in terms of calculations, which is why each of these two parts (223 to 236) or (239  to 250) can be a separate method.
+
+<p align = "center"> <img src = "../image/Example2.png"> </p>
+<p align = "center"> Example 2 </p>
