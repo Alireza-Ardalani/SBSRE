@@ -1,68 +1,26 @@
-# SBSRE
-SBSRE is a **slice-based single responsibility extraction** approach supported by an **eclipse plugin** for identifying Single responsibility violations in the methods.
+# Motivation Examples
 
-The responsibility of a method can be best described by its impacts on the outer scope that are exposed through modifying the return values, outputs, and global variables. In the context of object-oriented programming, a method may modify either the class fields or return a value to its caller method. If the corresponding slices of these fields or return values within the method body are entirely separate, the method presumably exposes different functionalities.
+This section offers motivational examples to illustrate the significance of focusing on multiple output instructions to address SRP violations. Additionally, it showcases the SBSRE tool's capability to identify extract method opportunities for methods with multiple output instructions.
 
-Existing extract method refactoring tools do not pay serious attention to these so-called output instructions and the output variables while searching for extract method candidates, which results in imprecise refactoring opportunity detection from the developer's viewpoint. We introduce a new **Output-based Slicing** algorithm, focused on extracting chunks of codes that commit to the specific output from the body of long methods.
+## Example 1
 
+### Source code
+JVLT project (https://jvlt.sourceforge.io/)
 
+### Extract method provided by SBSRE tool 
+lines 21 to 29
 
-## Relevant publications
-Preprint: Supporting single responsibility through automated extract method refactoring (https://arxiv.org/abs/2305.03428)
+### Description
 
+This Java method, "getMultimediaFileForName," takes a "name" as input and gives back a "MultimediaFile" based on the name's file extension. This method has four different return statements. In three cases, it simply returns results without much work. However, in the first case (line 32), it does some calculations between lines 21 to 29. This makes the method do two different things: converting the "name" into a "MultimediaFile" and doing calculations for the first case.
 
+The important thing to note here is that even though extracting lines 21 to 29 won't reduce the number of return statements in "getMultimediaFileForName" (they can't be reduced automatically), it helps make the method more focused on its primary responsibility, which is converting the "name" into a "MultimediaFile."
 
-## Getting started
-
-### Step1: Prerequisites
-
-It is recommended to use the Eclipse Neon IDE with JDK 1.8.x for lunching our SBSRE tool 
-
-* [Download Eclipse Neon](https://www.eclipse.org/downloads/packages/release/neon/3/eclipse-ide-java-ee-developers)
-
-* [Download JDK 8](https://www.oracle.com/java/technologies/downloads/)
+Focusing on the output instructions, the idea of the SBSRE tool, the calculation of each output instruction can be extracted if required.
 
 
-### Step2: Import the SBSRE tool
-
- Import the SBSRE tool in the Eclipse IDE
-
-<p align = "center"> <img src = "image/Step2.png"> </p>
-<p align = "center"> Figure 1. Operations of Step 2. </p>
+<p align = "center"> <img src = "../image/Example1.png"> </p>
+<p align = "center"> Example 1 </p>
 
 
-
-### Step3: Run the SBSRE tool 
-
-Run the SBSRE tool as as a plugin in the Eclipse IDE
-
-<p align = "center"> <img src = "image/Step3.png"> </p>
-<p align = "center"> Figure 2. Operations of Step 3. </p>
-
-
-
-### Step4: Open SRP-Violation window
-
-Insert or create a java project, then on Bad Smells tab, choose SRP-Violation
-
-<p align = "center"> <img src = "image/Step4.png"> </p>
-<p align = "center"> Figure 3. Operations of Step 4. </p>
-
-
-### Step5: Identifying SRP-Violation
-
-By clicking on each of the packages, classes, or methods, it will be selected. Then by clicking on the "i" icon, results will be shown.
-
-<p align = "center"> <img src = "image/Step5.png"> </p>
-<p align = "center"> Figure 4. Operations of Step 5. </p>
-
-
-
-### Step6: 
-
-Results are shown here and by selecting each of them, a code fragment proposed for method extraction will be highlighted.
-
-<p align = "center"> <img src = "image/Step6.png"> </p>
-<p align = "center"> Figure 5. Operations of Step 6. </p>
-
-
+## Example 1
