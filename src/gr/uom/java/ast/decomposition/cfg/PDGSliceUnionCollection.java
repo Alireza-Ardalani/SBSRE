@@ -79,9 +79,7 @@ public class PDGSliceUnionCollection {
 				}
 				for(BasicBlock basicBlock : basicBlockIntersection) {
 					PDGSliceUnion sliceUnion = new PDGSliceUnion(pdg, basicBlock, nodeCriteria, localVariableCriterion,First,Last);
-					
 					//Checking Scope of the output after backward slicing. 
-					//We know all the criterion are correct, so checking the Union of the bakward slices is neccesary 
 					Set<PDGNode> sliceNodes = sliceUnion.getSliceNodes();
 					Set<PDGNode> sliceNodesMustRemoved = new TreeSet<PDGNode>();
 					for(PDGNode node: sliceNodes){
@@ -115,7 +113,7 @@ public class PDGSliceUnionCollection {
 				}
 				for(BasicBlock basicBlock : basicBlockIntersection) {
 					PDGSliceUnion sliceUnion = new PDGSliceUnion(pdg, basicBlock, nodeCriteria, localVariableCriterion,First,Last);
-					if(sliceUnion.satisfiesRulesZZZZ()){
+					if(sliceUnion.satisfiesRulesGlobal()){
 						sliceUnionMap.put(basicBlock, sliceUnion);
 					}
 				}

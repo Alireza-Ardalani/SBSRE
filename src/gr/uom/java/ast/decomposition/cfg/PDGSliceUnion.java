@@ -6,6 +6,7 @@ import gr.uom.java.jdeodorant.preferences.PreferenceConstants;
 import gr.uom.java.jdeodorant.refactoring.Activator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -501,7 +502,7 @@ public class PDGSliceUnion {
 	private boolean complyWithUserThresholds() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		//int minimumSliceSize = store.getInt(PreferenceConstants.P_MINIMUM_SLICE_SIZE);
-		int minimumSliceSize = 2;
+		int minimumSliceSize = 3;
 		int maximumSliceSize = store.getInt(PreferenceConstants.P_MAXIMUM_SLICE_SIZE);
 		int maximumDuplication = store.getInt(PreferenceConstants.P_MAXIMUM_DUPLICATION);
 		double maximumRatioOfDuplicatedToExtracted = store.getDouble(
@@ -714,7 +715,56 @@ public class PDGSliceUnion {
 		
 		return false;
 	}
+	
+	public boolean preserveBehaviour(){
+		Set<PDGNode> duplicatedNodes = new LinkedHashSet<PDGNode>();
+		duplicatedNodes.addAll(sliceNodes);
+		duplicatedNodes.retainAll(indispensableNodes);
+		
+		List<Integer> sliceIDs = new ArrayList<Integer>();	
+		for(GraphNode node : sliceNodes){
+			sliceIDs.add(node.getId());
+		}
+		Collections.sort(sliceIDs);
+		int firstNode=0;
+		int lastNode=0;
+		
+		if(!sliceIDs.isEmpty()){
+			firstNode = sliceIDs.get(0);
+			lastNode = sliceIDs.get(sliceIDs.size()-1);
+		}
 
+		
+		for(GraphNode nodeInMethod : pdg.nodes){
+			int ID = nodeInMethod.getId();			
+			if(firstNode < ID & ID < lastNode & !(sliceNodes.contains(nodeInMethod))){
+				PDGNode PDGInMethod = (PDGNode)nodeInMethod;
+				Iterator <AbstractVariable> usedVariableInMethod = PDGInMethod.getUsedVariableIterator();
+				if(!usedVariableInMethod.hasNext()){
+					break;
+				}
+				else{
+				for(GraphNode nodeInslice : sliceNodes){
+					boolean check =true;
+					if(!duplicatedNodes.isEmpty()){
+						check = duplicatedNodes.contains(nodeInslice);
+					}
+					if(nodeInslice.getId() < ID & check ){
+						PDGNode PDGInSlice= (PDGNode)nodeInslice;
+						while(usedVariableInMethod.hasNext()){
+							AbstractVariable variable =  usedVariableInMethod.next();
+							if(PDGInSlice.definesLocalVariable(variable)){
+								System.out.println("==> ");
+								return true;
+							}
+						}
+					}
+				}
+			  }
+			}
+		}
+		return false;
+	}
 	public boolean satisfiesRules() {
 		if(sliceEqualsMethodBody() || sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||
 				declarationOfVariableCriterionIsDuplicated() || 
@@ -732,7 +782,7 @@ public class PDGSliceUnion {
 	
 	
 	public boolean satisfiesRulesSRP() {
-		if( sliceSameAsOrginalMethod() || notInitializedParameter() || outputRule() || variableCriterionIsFainal() ||
+		if( preserveBehaviour() || sliceSameAsOrginalMethod() || notInitializedParameter() || outputRule() || variableCriterionIsFainal() ||
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
 				   sliceNodes.size() <= nodeCriteria.size() ||
 				   allNodeCriteriaAreDuplicated() ||
@@ -745,9 +795,9 @@ public class PDGSliceUnion {
 					return false;
 				return true;
 	}
-	public boolean satisfiesRulesZZZZ() {
+	public boolean satisfiesRulesGlobal() {
 		//Niaz be eslah darad
-		if( sliceSameAsOrginalMethod() || variableCriterionIsFainal() ||
+		if( preserveBehaviour() || sliceSameAsOrginalMethod() || variableCriterionIsFainal() ||
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
 				   sliceNodes.size() <= nodeCriteria.size() ||
 				   allNodeCriteriaAreDuplicated() ||
