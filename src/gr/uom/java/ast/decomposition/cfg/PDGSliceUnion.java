@@ -796,7 +796,6 @@ public class PDGSliceUnion {
 				return true;
 	}
 	public boolean satisfiesRulesGlobal() {
-		//Niaz be eslah darad
 		if( preserveBehaviour() || sliceSameAsOrginalMethod() || variableCriterionIsFainal() ||
 				   sliceContainsOnlyOneNodeCriterionAndDeclarationOfVariableCriterion() ||sliceEqualsMethodBody() ||
 				   sliceNodes.size() <= nodeCriteria.size() ||
